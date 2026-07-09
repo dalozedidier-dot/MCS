@@ -1,0 +1,34 @@
+name: equipe_projet_demo
+author: Didier Daloze (ori-c.be)
+time_step: semaine
+L_crit: 40.0
+t_regulation_cible: 2.0
+delai_critique: 3.0
+aggregation: worst
+weights: {}
+proxies:
+- name: L
+  anchor_zero: aucune tache planifiee
+  anchor_one: plan de charge critique (40 h-eq/sem)
+  rel_err: 0.1
+- name: R
+  anchor_zero: aucune regulation observee
+  anchor_one: regulation au temps cible (2 j)
+  rel_err: 0.1
+- name: B
+  anchor_zero: signaux ignores
+  anchor_one: decision sous le delai critique (3 j)
+  rel_err: 0.1
+thresholds:
+  viable: 0.3
+  tension: 0.1
+  saturation: 0.05
+  pre_rupture: -0.05
+hysteresis_k: 3
+rho: 0.85
+theta0: 1.0
+s: 0.0
+irritant_age_weight: 0.1
+declared_at: '2026-07-09'
+frozen_at: '2026-07-09T23:38:49+00:00'
+fingerprint: f77f56ca7dfb2001d5800e8cc82e501315a1e5decf3b1bd179b28d6b59ba24e1
