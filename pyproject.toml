@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcs-model"
+version = "0.2.0"
+description = "Modele de Coherence Systemique - Indice de Marge Systemique M(t), dette invisible et pre-rupture"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Didier Daloze", email = "dalozedidier@gmail.com" }]
+keywords = ["systems", "resilience", "viability", "simulation", "early-warning"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+app = ["streamlit>=1.30", "pandas>=2.0"]
+protocol = ["pyyaml>=6.0"]
+viz = ["matplotlib>=3.7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
