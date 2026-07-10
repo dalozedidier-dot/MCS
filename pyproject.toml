@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcs-model"
-version = "0.6.1"
+version = "0.7.0"
 description = "Modele de Coherence Systemique - Indice de Marge Systemique M(t), dette invisible et pre-rupture"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,6 +22,7 @@ dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10", "hypothesis>
 app = ["streamlit>=1.30", "pandas>=2.0"]
 protocol = ["pyyaml>=6.0"]
 viz = ["matplotlib>=3.7"]
+real = ["pandas>=2.0", "numpy>=1.24", "pyyaml>=6.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

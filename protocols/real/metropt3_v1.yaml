@@ -1,0 +1,25 @@
+protocol_id: metropt3_mcs_v1
+status: draft_not_frozen
+source:
+  dataset: MetroPT-3
+  doi: 10.24432/C5VW3R
+  nature: real_operational_field_data
+split:
+  method: chronological
+  calibration_end: '2020-02-29T23:59:59'
+  validation_start: '2020-03-01T00:00:00'
+events:
+  source: company_failure_report
+  windows:
+    - ['2020-04-18T00:00:00', '2020-04-18T23:59:59', 'air_leak_high_stress']
+    - ['2020-05-29T23:30:00', '2020-05-30T06:00:00', 'air_leak_high_stress']
+    - ['2020-06-05T10:00:00', '2020-06-07T14:30:00', 'air_leak_high_stress']
+    - ['2020-07-15T14:30:00', '2020-07-15T19:00:00', 'air_leak_high_stress']
+proxies:
+  status: hypotheses_to_freeze_before_evaluation
+  L: motor_current_and_compressor_duty_cycle
+  R: post_load_pressure_and_temperature_recovery
+  B: pressure_consistency_and_control_response
+warning: >-
+  These proxy definitions are hypotheses, not measured truths. They must be implemented,
+  audited and frozen before viewing validation performance.

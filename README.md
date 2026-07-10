@@ -132,3 +132,46 @@ La page sera publiée à l’adresse fournie par GitHub Actions. Les liens vers 
 ## Licence
 
 MIT — voir `LICENSE`.
+
+## Validation sur données réelles — v0.7.0
+
+Le dépôt distingue désormais strictement trois niveaux :
+
+1. **tests analytiques** : vérification du code et des propriétés mathématiques ;
+2. **benchmarks synthétiques** : essais contrôlés, jamais présentés comme preuve empirique ;
+3. **données réelles** : mesures de terrain ou de banc physique, avec provenance, SHA-256 et événements externes.
+
+Aucun score empirique n'est fourni sans données sources. La chaîne installée prend en charge :
+
+- **MetroPT-3** : mesures opérationnelles d'un compresseur de métro et fenêtres de panne déclarées ;
+- **UCI Hydraulic Systems** : 2 205 cycles mesurés sur un banc hydraulique physique avec états de composants ;
+- **NASA IMS Bearings** : mesures vibratoires expérimentales jusqu'à défaillance.
+
+```bash
+pip install -e ".[real,viz]"
+python scripts/fetch_real_data.py --list
+python scripts/fetch_real_data.py metropt3
+python scripts/fetch_real_data.py hydraulic
+python scripts/fetch_real_data.py ims_bearings
+```
+
+Chaque acquisition crée `data/real/<dataset>/provenance.json` avec l'URL officielle, la date, la taille et le SHA-256 de chaque fichier. Les fichiers bruts sont exclus de Git ; seuls les protocoles, manifestes et résultats reproductibles peuvent être publiés.
+
+La page `docs/donnees-reelles.html` expose le catalogue et indique explicitement lorsqu'aucun résultat empirique n'a encore été calculé.
+
+### Évaluer un tableau réel déjà préparé
+
+Le projet ne déduit pas automatiquement les proxys, car cela introduirait des choix cachés. Après gel d'un protocole de domaine, fournir un CSV chronologique contenant exactement :
+
+```text
+timestamp,L,R,B,event
+```
+
+`event` doit provenir d'une panne, d'une maintenance ou d'une annotation externe au MCS. L'évaluateur ne crée ni trajectoire, ni événement, ni donnée manquante :
+
+```bash
+python scripts/run_empirical_csv.py data/real/mon_etude/validation.csv \
+  --output reports/mon_etude_empirique.json
+```
+
+Le résultat conserve le SHA-256 du CSV source afin qu'il soit impossible de remplacer silencieusement les données après calcul.

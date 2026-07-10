@@ -112,3 +112,15 @@ Phases 1 à 3 de la ROADMAP.
 ## 0.1.0
 
 Noyau §3–5, extensions §6.1–6.5, réseau §6.4, simulateur anti-circularité §5.1, scénarios §7, table §9.4, prototype Streamlit §8, 45 tests, CI.
+
+## 0.7.0 — Données réelles d'abord
+
+- ajout d'un registre explicite de sources réelles et officielles ;
+- support de MetroPT-3, UCI Hydraulic Systems et NASA IMS Bearings ;
+- téléchargement reproductible, cache local, extraction et SHA-256 de chaque fichier ;
+- enregistrement de fichiers locaux officiels sans altération ;
+- vérification d'intégrité des données avant analyse ;
+- protocoles réels séparés et laissés volontairement en brouillon avant gel ;
+- page GitHub Pages dédiée aux données réelles ;
+- aucune métrique empirique préremplie ou inventée ;
+- données brutes exclues du dépôt Git.

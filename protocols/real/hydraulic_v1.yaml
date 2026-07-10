@@ -1,0 +1,22 @@
+protocol_id: hydraulic_mcs_v1
+status: draft_not_frozen
+source:
+  dataset: Condition monitoring of hydraulic systems
+  doi: 10.24432/C5CW21
+  nature: real_physical_test_rig
+split:
+  method: blocked_chronological
+external_outcomes:
+  source: profile.txt
+  cooler_condition: [3, 20, 100]
+  valve_condition: [73, 80, 90, 100]
+  pump_leakage: [0, 1, 2]
+  accumulator_pressure: [90, 100, 115, 130]
+proxies:
+  status: hypotheses_to_freeze_before_evaluation
+  L: electrical_power_and_pressure_demand
+  R: thermal_and_pressure_recovery_within_cycle
+  B: sensor_consistency_and_stable_flag
+warning: >-
+  Component labels are external outcomes. Proxy rules must be frozen before the held-out
+  block is evaluated.

@@ -1,0 +1,53 @@
+{
+  "status": "catalogue_only_no_empirical_results_bundled",
+  "datasets": [
+    {
+      "slug": "metropt3",
+      "title": "MetroPT-3",
+      "kind": "field",
+      "status": "real operational data",
+      "source_url": "https://archive.ics.uci.edu/dataset/791/metropt%2B3%2Bdataset",
+      "download_url": "https://archive.ics.uci.edu/static/public/791/metropt%2B3%2Bdataset.zip",
+      "doi": "10.24432/C5VW3R",
+      "license": "CC BY 4.0",
+      "description": "Multivariate time series from the air-production unit of a metro train, with company failure windows and maintenance records.",
+      "citation": "Davari, N., Veloso, B., Ribeiro, R., & Gama, J. (2021). MetroPT-3 Dataset. UCI Machine Learning Repository.",
+      "expected_files": [
+        "MetroPT3(AirCompressor).csv"
+      ]
+    },
+    {
+      "slug": "hydraulic",
+      "title": "Condition monitoring of hydraulic systems",
+      "kind": "experimental",
+      "status": "real test-rig measurements",
+      "source_url": "https://archive.ics.uci.edu/dataset/447/condition+monitoring+of+hydraulic+systems",
+      "download_url": "https://archive.ics.uci.edu/static/public/447/condition%2Bmonitoring%2Bof%2Bhydraulic%2Bsystems.zip",
+      "doi": "10.24432/C5CW21",
+      "license": "CC BY 4.0",
+      "description": "Measurements from a physical hydraulic test rig over 2,205 load cycles, with component-condition labels.",
+      "citation": "Helwig, N., Pignanelli, E., & Schütze, A. (2015). Condition monitoring of hydraulic systems. UCI Machine Learning Repository.",
+      "expected_files": [
+        "profile.txt",
+        "PS1.txt",
+        "EPS1.txt",
+        "FS1.txt",
+        "TS1.txt",
+        "VS1.txt"
+      ]
+    },
+    {
+      "slug": "ims_bearings",
+      "title": "NASA IMS Bearings",
+      "kind": "experimental run-to-failure",
+      "status": "real physical experiment",
+      "source_url": "https://data.nasa.gov/dataset/ims-bearings",
+      "download_url": "https://data.nasa.gov/docs/legacy/IMS.zip",
+      "doi": null,
+      "license": "U.S. government work / source-specific terms",
+      "description": "Run-to-failure vibration measurements from bearings on the University of Cincinnati IMS test rig, distributed by NASA PCoE.",
+      "citation": "Center for Intelligent Maintenance Systems, University of Cincinnati; distributed by NASA Prognostics Center of Excellence.",
+      "expected_files": []
+    }
+  ]
+}

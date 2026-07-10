@@ -1,0 +1,17 @@
+protocol_id: ims_bearings_mcs_v1
+status: draft_not_frozen
+source:
+  dataset: NASA IMS Bearings
+  nature: real_physical_run_to_failure_experiment
+split:
+  method: leave_one_bearing_or_run_out
+external_outcome:
+  source: observed_run_termination_and_failure_documentation
+proxies:
+  status: hypotheses_to_freeze_before_evaluation
+  L: vibration_energy_and_load_indicators
+  R: return_toward_healthy_baseline_between_acquisitions
+  B: cross_channel_consistency_and_trend_feedback
+warning: >-
+  Failure timing and bearing identity must be taken from the official experiment metadata,
+  never inferred from M itself.

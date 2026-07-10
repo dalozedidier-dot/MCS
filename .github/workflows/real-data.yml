@@ -1,0 +1,37 @@
+name: Real data provenance check
+
+on:
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: Official real dataset to fetch and verify
+        required: true
+        type: choice
+        options:
+          - hydraulic
+          - metropt3
+          - ims_bearings
+
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -e '.[real]'
+      - name: Fetch official source and compute SHA-256 manifest
+        run: python scripts/fetch_real_data.py '${{ inputs.dataset }}'
+      - name: Verify every extracted file
+        run: python scripts/verify_real_data.py 'data/real/${{ inputs.dataset }}' --output 'reports/${{ inputs.dataset }}_integrity.json'
+      - name: Upload provenance only
+        uses: actions/upload-artifact@v4
+        with:
+          name: '${{ inputs.dataset }}-provenance'
+          path: |
+            data/real/${{ inputs.dataset }}/provenance.json
+            reports/${{ inputs.dataset }}_integrity.json
+          if-no-files-found: error

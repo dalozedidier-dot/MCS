@@ -11,3 +11,8 @@ venv/
 .vscode/
 .DS_Store
 *.ipynb_checkpoints
+
+# Real datasets: keep provenance/protocols, never commit raw archives
+/data/real/**/raw/
+/data/real/**/source.zip
+/data/real/**/*.part
