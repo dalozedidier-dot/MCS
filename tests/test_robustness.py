@@ -17,7 +17,6 @@ from mcs.robustness import (
     spectral_radius,
 )
 
-
 # -- rayon spectral ---------------------------------------------------------
 
 def test_spectral_radius_diagonal():

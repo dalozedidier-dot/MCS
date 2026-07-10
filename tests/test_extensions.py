@@ -2,7 +2,7 @@
 
 import pytest
 
-from mcs import core, extensions as ext
+from mcs import extensions as ext
 from mcs.network import NetworkConfig, saturation, simulate_network
 from mcs.simulator import SimConfig, simulate
 
@@ -122,3 +122,19 @@ class TestNetwork:
         s1, s2 = saturation(1.0, 0.5), saturation(10.0, 0.5)
         assert s1 < s2 < 1.0    # differencie les fortes dettes
       
+
+def test_single_node_network_matches_full_individual_simulation():
+    """Invariant architectural : zero couplage => meme moteur complet."""
+    cfg = SimConfig(
+        L=[0.35, 0.55, 0.40], R=0.82, B=0.74, rho=0.86, D_crit=0.8,
+        mu0=0.18,
+        theta_params=ext.ThetaParams(theta0=1.0, theta_min=0.45,
+                                     alpha=0.25, beta=0.12, tau=0.4),
+        control=ext.ControlParams(chi=0.08, kappa=0.35, eta=0.45,
+                                  delta=0.15, gain=1.2, m_ref=0.2),
+        recovery=ext.RecoveryParams(delta_D=0.12, delta_B=0.2,
+                                    B_crit=0.5, R_min=0.25),
+    )
+    individual = simulate(cfg, 60)
+    network = simulate_network(NetworkConfig([cfg], [[0.0]]), 60)[0]
+    assert network.to_dict() == pytest.approx(individual.to_dict())

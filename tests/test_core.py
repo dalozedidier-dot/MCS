@@ -90,7 +90,8 @@ class TestZones:
         # retour : compteur remis a zero
         assert h.update(0.5) == core.Zone.VIABLE
         # k pas consecutifs confirment le changement
-        h.update(0.2); h.update(0.2)
+        h.update(0.2)
+        h.update(0.2)
         assert h.update(0.2) == core.Zone.TENSION
 
     def test_uncertainty_near_threshold(self):

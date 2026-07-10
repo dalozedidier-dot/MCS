@@ -16,11 +16,11 @@ Requiert : pip install -e ".[viz]"
 from __future__ import annotations
 
 import random
-import statistics
 from dataclasses import replace
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -28,8 +28,12 @@ from mcs import SimConfig, simulate
 from mcs.baselines import falsification_report, falsification_run
 from mcs.extensions import viability_repayment_threshold
 from mcs.robustness import (
-    cascade_sweep, false_alarm_study, monte_carlo, noisy,
-    oscillation_score, sensitivity_tornado,
+    cascade_sweep,
+    false_alarm_study,
+    monte_carlo,
+    noisy,
+    oscillation_score,
+    sensitivity_tornado,
 )
 
 OUT = Path(__file__).resolve().parent.parent / "reports"
@@ -45,8 +49,10 @@ fig, ax = plt.subplots(figsize=(6, 3))
 ax.barh(names, vals, color="#2f6b4f")
 ax.set_xlabel("|contribution a dM| pour 10 % d'erreur relative")
 ax.set_title(f"Sensibilite au point M = {t['M']:+.2f} (§ 4)")
-fig.tight_layout(); fig.savefig(OUT / "tornado.png", dpi=150); plt.close(fig)
-lines += [f"## Sensibilite (tornado)",
+fig.tight_layout()
+fig.savefig(OUT / "tornado.png", dpi=150)
+plt.close(fig)
+lines += ["## Sensibilite (tornado)",
           f"Au point de fonctionnement (M = {t['M']:+.2f}), 10 % d'erreur "
           f"par proxy deplace M de {t['total']:.3f} au total - plus d'une "
           "bande de zone entiere : M doit toujours etre rapporte avec IC.", ""]
@@ -65,17 +71,19 @@ for r in range(40):
     ax.plot(res.t, res.M, color="#2f6b4f", alpha=0.15)
 det = simulate(cfg, 60)
 ax.plot(det.t, det.M, color="#b8892b", lw=2, label="deterministe")
-for y, lbl in ((0.30, "viable"), (0.10, "tension"), (0.05, "saturation"),
+for y, _lbl in ((0.30, "viable"), (0.10, "tension"), (0.05, "saturation"),
                (-0.05, "pre-rupture")):
     ax.axhline(y, color="grey", ls=":", lw=0.7)
-ax.set_xlabel("t"); ax.set_ylabel("M(t)")
+ax.set_xlabel("t")
+ax.set_ylabel("M(t)")
 ax.set_title("Degradation lente sous bruit multiplicatif (300 runs)")
 ax.legend()
-fig.tight_layout(); fig.savefig(OUT / "monte_carlo.png", dpi=150)
+fig.tight_layout()
+fig.savefig(OUT / "monte_carlo.png", dpi=150)
 plt.close(fig)
 d = mc.as_dict()
 lines += ["## Monte Carlo (bruit multiplicatif L 10 %, R/B 5 %)",
-          f"M final q05/q50/q95 = {['%+.3f' % q for q in d['M_final_q05_q50_q95']]}, "
+          f"M final q05/q50/q95 = {[f'{q:+.3f}' for q in d['M_final_q05_q50_q95']]}, "
           f"taux d'alerte = {d['alert_rate']:.0%}, "
           f"pas median de premiere alerte = {d['median_first_alert']}, "
           f"trajectoires divergentes = {d['diverged']}/300.", ""]
@@ -90,7 +98,8 @@ ax.plot([r.k for r in recs], [r.suppression * 100 for r in recs],
 ax.set_xlabel("k (pas de confirmation)")
 ax.set_ylabel("fausses alertes supprimees (%)")
 ax.set_title("Calibration de l'hysteresis (systeme stationnaire bruite)")
-fig.tight_layout(); fig.savefig(OUT / "hysteresis_k.png", dpi=150)
+fig.tight_layout()
+fig.savefig(OUT / "hysteresis_k.png", dpi=150)
 plt.close(fig)
 lines += ["## Hysteresis",
           "| k | transitions brutes | confirmees | suppression |",
@@ -113,14 +122,17 @@ ax1.plot([c["strength"] for c in casc],
          [c["spectral_radius"] for c in casc], "o-", color="#b8892b",
          label="rho(J)")
 ax1.axhline(1.0, color="grey", ls="--", lw=0.8)
-ax1.set_xlabel("intensite de couplage"); ax1.set_ylabel("rayon spectral")
+ax1.set_xlabel("intensite de couplage")
+ax1.set_ylabel("rayon spectral")
 ax2 = ax1.twinx()
 ax2.bar([c["strength"] for c in casc], [c["nodes_broken"] for c in casc],
         width=[max(0.004, s * 0.15) for s in strengths],
         color="#2f6b4f", alpha=0.5, label="noeuds en (pre-)rupture")
 ax2.set_ylabel("noeuds casses / 3")
 ax1.set_title("Cascade : la bascule suit le seuil rho(J) = 1 (§ 6.4)")
-fig.tight_layout(); fig.savefig(OUT / "cascade.png", dpi=150); plt.close(fig)
+fig.tight_layout()
+fig.savefig(OUT / "cascade.png", dpi=150)
+plt.close(fig)
 lines += ["## Reseau : condition exacte de petit gain",
           "| couplage | rho(J) | stable (prediction) | noeuds casses |",
           "|---|---|---|---|"]
@@ -146,15 +158,17 @@ for mu in mus:
     amps.append(oscillation_score(res.D, burn_in=60)["amplitude"])
 fig, ax = plt.subplots(figsize=(6, 3.5))
 ax.plot([m / mu_star for m in mus], amps, "o-", color="#2f6b4f")
-ax.set_xlabel("mu0 / mu*"); ax.set_ylabel("amplitude residuelle de D")
+ax.set_xlabel("mu0 / mu*")
+ax.set_ylabel("amplitude residuelle de D")
 ax.set_title("Comportement autour de la condition de viabilite mu* (§ 9.6)")
-fig.tight_layout(); fig.savefig(OUT / "oscillations.png", dpi=150)
+fig.tight_layout()
+fig.savefig(OUT / "oscillations.png", dpi=150)
 plt.close(fig)
 lines += ["## Autour de mu*",
           f"mu* = {mu_star:.3f} au point de fonctionnement. Amplitudes "
           "residuelles de D apres transitoire : "
           + ", ".join(f"{m/mu_star:.2f}x -> {a:.4f}"
-                      for m, a in zip(mus, amps)) + ".", ""]
+                      for m, a in zip(mus, amps, strict=True)) + ".", ""]
 
 (OUT / "robustesse.md").write_text("\n".join(lines), encoding="utf-8")
 

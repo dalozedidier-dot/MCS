@@ -8,6 +8,14 @@ donnees. Ce n'est PAS un outil de diagnostic clinique, psychologique
 ou organisationnel valide.
 """
 
+from .baselines import (
+    ComparisonRecord,
+    FalsificationRecord,
+    compare_detectors,
+    falsification_report,
+    falsification_run,
+    mcs_alarm,
+)
 from .core import (
     DEFAULT_THRESHOLDS,
     HysteresisClassifier,
@@ -42,14 +50,6 @@ from .extensions import (
     theta_update,
     viability_repayment_threshold,
 )
-from .baselines import (
-    ComparisonRecord,
-    FalsificationRecord,
-    compare_detectors,
-    falsification_report,
-    falsification_run,
-    mcs_alarm,
-)
 from .network import NetworkConfig, saturation, simulate_network
 from .protocol import Protocol, ProtocolError, ProxySpec, compute_series
 from .robustness import (
@@ -62,7 +62,7 @@ from .robustness import (
 )
 from .simulator import SimConfig, SimResult, simulate
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __all__ = [
     "DEFAULT_THRESHOLDS", "HysteresisClassifier", "Zone",
     "bounded_margin_index", "capacity", "classify", "debt_rest_level",

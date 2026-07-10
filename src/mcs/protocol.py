@@ -34,7 +34,7 @@ from pathlib import Path
 
 from . import core
 from .core import HysteresisClassifier, clip
-from .simulator import SimConfig, simulate
+from .validation import non_negative, positive, unit_interval, validate_thresholds
 
 try:  # dependance optionnelle
     import yaml as _yaml
@@ -61,6 +61,13 @@ class ProxySpec:
     anchor_zero: str
     anchor_one: str
     rel_err: float = 0.10          # erreur relative declaree (§ 4)
+
+    def __post_init__(self) -> None:
+        if not self.name.strip():
+            raise ValueError("le nom du proxy ne peut pas etre vide")
+        if not self.anchor_zero.strip() or not self.anchor_one.strip():
+            raise ValueError("les deux ancrages du proxy doivent etre decrits")
+        non_negative("rel_err", self.rel_err)
 
 
 @dataclass
@@ -94,20 +101,42 @@ class Protocol:
         d.pop("fingerprint", None)
         return json.dumps(d, sort_keys=True, ensure_ascii=True)
 
-    def freeze(self) -> "Protocol":
-        """Gele le protocole : date + empreinte SHA-256 du contenu.
-
-        Toute modification ulterieure invalide l'empreinte et sera
-        detectee par verify().
-        """
+    def _validate(self) -> None:
+        if not self.name.strip() or not self.author.strip() or not self.time_step.strip():
+            raise ProtocolError("name, author et time_step sont obligatoires")
         if self.aggregation not in ("worst", "weighted"):
             raise ProtocolError("aggregation doit etre 'worst' ou 'weighted'")
-        if self.aggregation == "weighted" and not self.weights:
-            raise ProtocolError("agregation ponderee sans poids declares")
-        if self.L_crit <= 0 or self.t_regulation_cible <= 0 \
-                or self.delai_critique <= 0:
-            raise ProtocolError("les references de normalisation doivent "
-                                "etre strictement positives")
+        try:
+            positive("L_crit", self.L_crit)
+            positive("t_regulation_cible", self.t_regulation_cible)
+            positive("delai_critique", self.delai_critique)
+            unit_interval("rho", self.rho)
+            positive("theta0", self.theta0)
+            unit_interval("s", self.s)
+            non_negative("irritant_age_weight", self.irritant_age_weight)
+            self.thresholds = validate_thresholds(self.thresholds)
+        except (TypeError, ValueError) as exc:
+            raise ProtocolError(str(exc)) from exc
+        if self.hysteresis_k < 1:
+            raise ProtocolError("hysteresis_k doit etre superieur ou egal a 1")
+        names = [proxy.name for proxy in self.proxies]
+        if len(names) != len(set(names)):
+            raise ProtocolError("les noms de proxys doivent etre uniques")
+        if self.aggregation == "weighted":
+            if not self.weights:
+                raise ProtocolError("agregation ponderee sans poids declares")
+            missing = [name for name in names if name not in self.weights]
+            if missing:
+                raise ProtocolError(f"poids manquants pour les proxys : {missing}")
+            extra = [name for name in self.weights if name not in names]
+            if extra:
+                raise ProtocolError(f"poids sans proxy declare : {extra}")
+            if any(weight <= 0 for weight in self.weights.values()):
+                raise ProtocolError("les poids doivent etre strictement positifs")
+
+    def freeze(self) -> Protocol:
+        """Valide puis gele le protocole par empreinte SHA-256."""
+        self._validate()
         if not self.declared_at:
             self.declared_at = _dt.date.today().isoformat()
         self.frozen_at = _dt.datetime.now(_dt.timezone.utc).isoformat(
@@ -117,7 +146,7 @@ class Protocol:
         return self
 
     def verify(self) -> None:
-        """Leve ProtocolError si non gele ou altere apres gel."""
+        """Leve ProtocolError si non gele, invalide ou altere apres gel."""
         if not self.frozen_at or not self.fingerprint:
             raise ProtocolError(
                 "protocole non gele : declarer puis freeze() AVANT "
@@ -126,6 +155,7 @@ class Protocol:
                 != self.fingerprint:
             raise ProtocolError(
                 "protocole modifie apres gel : empreinte SHA-256 invalide")
+        self._validate()
 
     # -- serialisation --------------------------------------------------
 
@@ -145,7 +175,7 @@ class Protocol:
         return path
 
     @classmethod
-    def load(cls, path: str | Path) -> "Protocol":
+    def load(cls, path: str | Path) -> Protocol:
         path = Path(path)
         text = path.read_text(encoding="utf-8")
         if path.suffix in (".yaml", ".yml"):
@@ -175,6 +205,8 @@ def normalize_recovery(t_observed: float, t_target: float) -> float:
     Reguler aussi vite que la cible => R = 1 ; deux fois plus lentement
     => R = 0.5. t_observed <= 0 (jamais regule) => R = 0.
     """
+    if t_target <= 0:
+        raise ValueError("t_target doit etre strictement positif")
     if t_observed <= 0:
         return 0.0
     return clip(t_target / t_observed, 0.0, 1.0)
@@ -182,6 +214,8 @@ def normalize_recovery(t_observed: float, t_target: float) -> float:
 
 def normalize_feedback(delay_observed: float, delay_critical: float) -> float:
     """B(t) = clip(delai critique / delai signal->decision, 0, 1)."""
+    if delay_critical <= 0:
+        raise ValueError("delay_critical doit etre strictement positif")
     if delay_observed <= 0:
         return 1.0
     return clip(delay_critical / delay_observed, 0.0, 1.0)
@@ -191,6 +225,10 @@ def initial_debt(irritants: list[tuple[float, int]],
                  age_weight: float) -> float:
     """D(0) = somme des irritants ouverts ponderes par anciennete :
     sum severite_i * (1 + age_weight * age_i)."""
+    if age_weight < 0:
+        raise ValueError("age_weight doit etre positif ou nul")
+    if any(age < 0 for _, age in irritants):
+        raise ValueError("l'anciennete des irritants doit etre positive ou nulle")
     return sum(sev * (1.0 + age_weight * age)
                for sev, age in irritants if sev > 0)
 
@@ -325,8 +363,12 @@ def compute_series(proto: Protocol, rows: list[dict]) -> Report:
         dM = core.margin_uncertainty(M, A, C, rel_err_A=eL,
                                      rel_err_R=eR, rel_err_B=eB)
         rep.t.append(int(row["t"]))
-        rep.L.append(L); rep.R.append(R); rep.B.append(B)
-        rep.D.append(D); rep.M.append(M); rep.M_err.append(dM)
+        rep.L.append(L)
+        rep.R.append(R)
+        rep.B.append(B)
+        rep.D.append(D)
+        rep.M.append(M)
+        rep.M_err.append(dM)
         rep.zone.append(classifier.update(M).value)
         D = core.debt_update(D, L, R, B, C, proto.rho)
     return rep

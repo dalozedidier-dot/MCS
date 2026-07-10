@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0 — 2026-07-10
+
+### Cohérence des moteurs
+- Le simulateur réseau applique désormais toutes les extensions du simulateur individuel : contrôle, remboursement, récupération évolutive et capacité Θ dynamique.
+- Ajout d’un invariant testé : un réseau à un nœud sans couplage reproduit exactement `simulate()`.
+
+### Validation et qualité
+- Validation centralisée des domaines, seuils, séries temporelles, nombres de pas, paramètres d’extension, matrices de couplage et protocoles.
+- Validation complète avant gel du protocole : proxys uniques, ancrages non vides, poids cohérents et strictement positifs, paramètres et seuils valides.
+- Suite portée de 69 à 76 tests. Ajout de Ruff, couverture, Hypothesis, build et Twine aux outils de développement.
+- CI renforcée : lint, couverture, rapports reproductibles et vérification du paquet.
+
+### Diffusion
+- Nouvelle page GitHub Pages dans `docs/` : résultats, graphiques de robustesse, méthode, limites et instructions de reproduction.
+- Workflow `pages.yml` pour le déploiement automatique.
+
 ## 0.2.0 — 2026-07-10
 
 Phases 1 à 3 de la ROADMAP.

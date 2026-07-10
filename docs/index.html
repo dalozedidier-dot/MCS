@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Résultats, robustesse et falsification du Modèle de Cohérence Systémique (MCS).">
+  <title>MCS — Résultats et robustesse</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav shell" aria-label="Navigation principale">
+      <a class="brand" href="#top" aria-label="Accueil MCS"><span class="brand-mark">M</span><span>MCS</span></a>
+      <div class="nav-links">
+        <a href="#resultats">Résultats</a><a href="#methode">Méthode</a><a href="#limites">Limites</a><a href="#reproduire">Reproduire</a>
+      </div>
+      <a class="button button-small" data-repo-link href="https://github.com/">Voir le dépôt</a>
+    </nav>
+    <div class="shell hero-grid" id="top">
+      <div>
+        <p class="eyebrow">Modèle de Cohérence Systémique · v0.3.0</p>
+        <h1>Mesurer une marge.<br><span>Tester une dynamique.</span></h1>
+        <p class="lead">Un cadre computationnel exploratoire pour étudier comment charge, récupération, boucles de retour et dette accumulée peuvent déplacer un système vers la tension, la pré-rupture ou la réorganisation.</p>
+        <div class="hero-actions">
+          <a class="button" href="#resultats">Explorer les résultats</a>
+          <a class="button button-ghost" href="reports/robustesse.md">Lire le rapport brut</a>
+        </div>
+        <p class="disclaimer">Cadre de recherche et pédagogique. Ce site ne présente ni un diagnostic, ni une validation clinique ou organisationnelle.</p>
+      </div>
+      <div class="equation-card" aria-label="Équations centrales du modèle">
+        <div class="equation-label">Noyau du modèle</div>
+        <div class="equation">A(t) = L(t) + D(t)</div>
+        <div class="equation">C(t) = Θ(t) · [s(R+B)/2 + (1−s)RB]</div>
+        <div class="equation equation-main">M(t) = 1 − A(t) / C(t)</div>
+        <div class="equation-divider"></div>
+        <div class="equation equation-small">D(t+1) = ρD + (1−R)L(1−B) + max(0, L−C)</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats shell" id="resultats" aria-label="Indicateurs du projet">
+      <article><strong data-count="76">0</strong><span>tests automatisés</span></article>
+      <article><strong>3 / 3</strong><span>tests synthétiques de falsification</span></article>
+      <article><strong>3.10–3.12</strong><span>versions Python testées en CI</span></article>
+      <article><strong>SHA‑256</strong><span>intégrité du protocole gelé</span></article>
+    </section>
+
+    <section class="section shell">
+      <div class="section-heading">
+        <p class="eyebrow">Résultats calculés</p>
+        <h2>Ce que le dépôt démontre aujourd’hui</h2>
+        <p>Les résultats ci-dessous établissent la cohérence interne, la robustesse numérique et la reproductibilité des scénarios définis. Ils ne remplacent pas une validation sur données externes.</p>
+      </div>
+      <div class="result-grid">
+        <article class="result-card"><div class="result-index">01</div><h3>Cohérence du noyau</h3><p>Les cas limites, niveaux stationnaires, seuils analytiques et propriétés de bornitude sont couverts par des tests automatisés.</p><span class="tag">76/76 PASS</span></article>
+        <article class="result-card"><div class="result-index">02</div><h3>Équivalence des moteurs</h3><p>Un réseau à un seul nœud sans couplage reproduit désormais le moteur individuel, extensions comprises.</p><span class="tag">Invariant architectural</span></article>
+        <article class="result-card"><div class="result-index">03</div><h3>Signal avancé synthétique</h3><p>Dans le scénario de dégradation silencieuse, la dette augmente et le MCS alerte alors que la charge seule reste sous son seuil.</p><span class="tag">F1 PASS</span></article>
+        <article class="result-card"><div class="result-index">04</div><h3>Filtrage du transitoire</h3><p>Un choc bref peut déclencher la baseline de charge sans empêcher le système de revenir en zone viable.</p><span class="tag">F2 PASS</span></article>
+        <article class="result-card"><div class="result-index">05</div><h3>Avance sur rupture</h3><p>Dans le scénario canonique de montée vers la rupture, l’alerte MCS précède ou égale l’alerte fondée sur la charge.</p><span class="tag">F3 PASS</span></article>
+        <article class="result-card"><div class="result-index">06</div><h3>Anti-circularité</h3><p>Le calcul refuse un protocole non gelé ou modifié après gel. Les proxys et seuils doivent être déclarés avant l’analyse.</p><span class="tag">Vérification intégrée</span></article>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="shell">
+        <div class="section-heading compact"><p class="eyebrow">Robustesse numérique</p><h2>Voir les dynamiques, pas seulement les scores</h2></div>
+        <div class="gallery">
+          <figure class="featured"><img src="assets/monte_carlo.png" alt="Éventail Monte Carlo des trajectoires de marge systémique" loading="lazy"><figcaption><strong>Monte Carlo</strong><span>Dispersion de M(t) sous bruit multiplicatif sur L, R et B.</span></figcaption></figure>
+          <figure><img src="assets/hysteresis_k.png" alt="Réduction des fausses alertes selon le paramètre d'hystérésis" loading="lazy"><figcaption><strong>Hystérésis</strong><span>Effet du nombre de confirmations sur les transitions parasites.</span></figcaption></figure>
+          <figure><img src="assets/cascade.png" alt="Propagation de cascades en fonction du rayon spectral" loading="lazy"><figcaption><strong>Cascades</strong><span>Relation entre couplage, rayon spectral et propagation des ruptures.</span></figcaption></figure>
+          <figure><img src="assets/tornado.png" alt="Diagramme de sensibilité de l'indice MCS" loading="lazy"><figcaption><strong>Sensibilité</strong><span>Contribution des incertitudes de mesure à l’incertitude sur M.</span></figcaption></figure>
+          <figure><img src="assets/oscillations.png" alt="Oscillations autour du seuil de remboursement" loading="lazy"><figcaption><strong>Oscillations</strong><span>Dynamique près de la condition de viabilité du remboursement.</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="methode">
+      <div class="section-heading"><p class="eyebrow">Méthode</p><h2>Une chaîne de preuve explicite</h2></div>
+      <div class="timeline">
+        <article><span>1</span><div><h3>Déclarer</h3><p>Définir les proxys, ancrages, seuils, erreurs relatives et règles d’agrégation avant de regarder les résultats.</p></div></article>
+        <article><span>2</span><div><h3>Geler</h3><p>Calculer une empreinte SHA‑256 du protocole. Toute retouche ultérieure est détectée.</p></div></article>
+        <article><span>3</span><div><h3>Calculer</h3><p>Normaliser L, R et B, mettre à jour D, calculer C puis M, et appliquer l’hystérésis sans fuite du futur.</p></div></article>
+        <article><span>4</span><div><h3>Comparer</h3><p>Confronter le signal MCS à des baselines simples : seuil de charge et moyenne mobile.</p></div></article>
+        <article><span>5</span><div><h3>Chercher l’échec</h3><p>Documenter les scénarios où les lois de mise à jour ne produisent pas l’avance ou la stabilité attendue.</p></div></article>
+      </div>
+    </section>
+
+    <section class="section limit-section" id="limites">
+      <div class="shell limit-grid">
+        <div><p class="eyebrow">Discipline d’interprétation</p><h2>Ce qui n’est pas encore démontré</h2></div>
+        <div class="limit-list">
+          <article><h3>Validation externe</h3><p>Les résultats actuels sont synthétiques. La capacité prédictive sur des systèmes réels reste à tester sur des données indépendantes.</p></article>
+          <article><h3>Identifiabilité</h3><p>Plusieurs combinaisons de L, D, R, B, Θ et ρ peuvent produire des trajectoires proches. Les causes ne sont pas inférées automatiquement.</p></article>
+          <article><h3>Seuils universels</h3><p>Les zones sont ordinales et pédagogiques. Elles doivent être calibrées par domaine et rapportées avec incertitude.</p></article>
+          <article><h3>Pas de diagnostic</h3><p>Une valeur négative isolée de M ne suffit jamais à conclure sur une personne, une équipe ou une organisation.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="reproduire">
+      <div class="reproduce-card">
+        <div><p class="eyebrow">Reproductibilité</p><h2>Rejouer l’intégralité des résultats</h2><p>Le dépôt inclut les tests, les scripts de robustesse, le protocole d’exemple et les rapports générés.</p></div>
+        <pre><code>git clone https://github.com/&lt;compte&gt;/mcs-model.git
+cd mcs-model
+pip install -e ".[dev,viz,protocol]"
+pytest -q
+python scripts/run_robustness.py
+python scripts/run_protocol_demo.py</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="shell footer-grid"><div><strong>MCS · Modèle de Cohérence Systémique</strong><p>Didier Daloze · Licence MIT</p></div><div><a data-repo-link href="https://github.com/">Code source</a><a href="https://github.com/" data-repo-link>Documentation</a><a href="reports/roadmap.md">Feuille de route</a></div></div></footer>
+</body>
+</html>

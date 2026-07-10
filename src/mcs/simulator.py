@@ -14,11 +14,12 @@ disponibles au temps t, puis les etats sont mis a jour pour t+1.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
-from typing import Callable, Sequence
 
-from . import core, extensions as ext
-
+from . import core
+from . import extensions as ext
+from .validation import non_negative, positive, unit_interval, validate_series, validate_thresholds
 
 Series = Sequence[float] | Callable[[int], float] | float
 
@@ -29,6 +30,8 @@ def _at(x: Series, t: int) -> float:
         return float(x(t))
     if isinstance(x, (int, float)):
         return float(x)
+    if len(x) == 0:
+        raise ValueError("une serie temporelle ne peut pas etre vide")
     return float(x[min(t, len(x) - 1)])
 
 
@@ -69,6 +72,21 @@ class SimConfig:
     hysteresis_k: int = 3
     thresholds: dict | None = None
 
+    def __post_init__(self) -> None:
+        validate_series("L", self.L)
+        validate_series("R", self.R)
+        validate_series("B", self.B)
+        positive("theta0", self.theta0)
+        non_negative("D0", self.D0)
+        unit_interval("rho", self.rho)
+        unit_interval("s", self.s)
+        non_negative("mu0", self.mu0)
+        non_negative("gamma", self.gamma)
+        positive("D_crit", self.D_crit)
+        if self.hysteresis_k < 1:
+            raise ValueError("hysteresis_k doit etre superieur ou egal a 1")
+        self.thresholds = validate_thresholds(self.thresholds)
+
 
 @dataclass
 class SimResult:
@@ -98,6 +116,8 @@ class SimResult:
 
 def simulate(cfg: SimConfig, n_steps: int = 52) -> SimResult:
     """Execute n_steps pas de simulation et retourne les trajectoires."""
+    if n_steps < 1:
+        raise ValueError("n_steps doit etre superieur ou egal a 1")
     res = SimResult()
     classifier = core.HysteresisClassifier(k=cfg.hysteresis_k,
                                            thresholds=cfg.thresholds)

@@ -1,13 +1,14 @@
-name: tests
+name: Quality gates
 
 on:
   push:
   pull_request:
 
 jobs:
-  pytest:
+  test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
@@ -15,7 +16,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install --upgrade pip
       - run: pip install -e ".[dev,viz,protocol]"
-      - run: pytest -v
+      - run: ruff check src tests scripts
+      - run: pytest --cov=mcs --cov-report=term-missing
       - run: python scripts/run_robustness.py
       - run: python scripts/run_protocol_demo.py
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip build twine
+      - run: python -m build
+      - run: twine check dist/*

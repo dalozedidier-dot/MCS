@@ -25,13 +25,12 @@ from __future__ import annotations
 import math
 import random
 import statistics
-from dataclasses import dataclass, field, replace
-from typing import Callable, Sequence
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass, replace
 
 from . import core
 from .core import Zone, classify, clip
-from .simulator import SimConfig, SimResult, _at, simulate
-
+from .simulator import SimConfig, _at, simulate
 
 # ---------------------------------------------------------------------------
 # 1. Bruit multiplicatif et Monte Carlo

@@ -2,7 +2,8 @@
 
 import pytest
 
-from mcs import core, extensions as ext
+from mcs import core
+from mcs import extensions as ext
 
 
 class TestDebtDynamics:

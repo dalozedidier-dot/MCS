@@ -24,8 +24,8 @@ activement des jeux de donnees ou les lois de mise a jour echouent).
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 from .core import Zone
 from .simulator import SimConfig, SimResult, simulate

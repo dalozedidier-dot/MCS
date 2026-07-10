@@ -12,13 +12,13 @@ class TestProjectTeam94:
     def test_debt_trajectory(self):
         res = scenarios.project_team()
         for week, (d_sim, d_doc) in enumerate(
-                zip(res.D, scenarios.TEAM_EXPECTED_D), start=1):
+                zip(res.D, scenarios.TEAM_EXPECTED_D, strict=True), start=1):
             assert d_sim == pytest.approx(d_doc, abs=0.002), f"semaine {week}"
 
     def test_margin_trajectory(self):
         res = scenarios.project_team()
         for week, (m_sim, m_doc) in enumerate(
-                zip(res.M, scenarios.TEAM_EXPECTED_M), start=1):
+                zip(res.M, scenarios.TEAM_EXPECTED_M, strict=True), start=1):
             assert m_sim == pytest.approx(m_doc, abs=0.005), f"semaine {week}"
 
     def test_week8_lesson(self):

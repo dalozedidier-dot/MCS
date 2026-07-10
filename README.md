@@ -66,11 +66,12 @@ streamlit run app/streamlit_app.py
 | `src/mcs/baselines.py` | Phase 3 : baselines naïves, avance de signal, harnais de falsification | §9.7 |
 | `scripts/` | Génération des rapports et figures (`reports/`) | — |
 | `ROADMAP.md` | Plan complet du projet (phases 0 → 5) | — |
+| `docs/` | GitHub Pages : résultats, méthode, limites et reproductibilité | — |
 
 ## Ce que les tests vérifient déjà
 
 - **D\* = (1−R)L(1−B)/(1−ρ)** : convergence numérique vers le niveau de repos de la dette, et croissance non bornée si ρ = 1.
-- **La dette est un indicateur avancé** : elle monte en zone viable dès que R < 1 ou B < 1.
+- **Dans le modèle, la dette est un candidat indicateur avancé** : elle monte en zone viable dès que R < 1 ou B < 1.
 - **Condition de viabilité du remboursement** : en deçà de μ\*, la dette dérive ; au-delà, elle se stabilise.
 - **Garde d'emballement α\*** = (1−ρ)·D_crit/(Θ₀RB) : au-delà, Θ s'effondre jusqu'à Θ_min.
 - **Optimum de contrôle U\*** = κ/(2η) : le contrôle restaure B puis la dégrade.
@@ -96,14 +97,24 @@ L'anti-circularité du §9.2 est appliquée **par le code** : `compute_series` r
 
 ```bash
 cd mcs-model
-git init && git add . && git commit -m "MCS v0.1.0 - noyau, extensions, tests, prototype"
+git init && git add . && git commit -m "MCS v0.3.0 - moteurs unifies, validations, tests et GitHub Pages"
 gh repo create mcs-model --public --source=. --push
 # ou : créer le repo sur github.com puis
 # git remote add origin https://github.com/<votre-compte>/mcs-model.git
 # git push -u origin main
 ```
 
-La CI (GitHub Actions) lance `pytest` sur Python 3.10–3.12 à chaque push.
+La CI (GitHub Actions) exécute désormais les garde-fous qualité sur Python 3.10–3.12 : Ruff, couverture de tests, génération des rapports et vérification du paquet.
+
+## Publier la page de résultats avec GitHub Pages
+
+La vitrine statique est dans `docs/`. Elle présente les résultats de robustesse, le harnais de falsification, la méthode et les limites sans confondre cohérence interne et validation empirique.
+
+1. Pousser le dépôt sur la branche `main`.
+2. Dans GitHub : **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+3. Lancer le workflow **Deploy GitHub Pages** ou pousser une modification dans `docs/`.
+
+La page sera publiée à l’adresse fournie par GitHub Actions. Les liens vers le dépôt s’adaptent automatiquement à l’URL GitHub Pages.
 
 ## Licence
 

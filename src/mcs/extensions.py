@@ -15,7 +15,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .core import clip, leak, overflow
-
+from .validation import non_negative, positive, unit_interval
 
 # ---------------------------------------------------------------------------
 # 6.1 Remboursement actif de la dette
@@ -71,11 +71,20 @@ def viability_repayment_threshold(L: float, R: float, B: float,
 
 @dataclass
 class ThetaParams:
-    theta0: float = 1.0      # valeur de reference
-    theta_min: float = 0.2   # plancher structurel
-    alpha: float = 0.0       # sensibilite a la dette normalisee
-    beta: float = 0.0        # sensibilite a la degradation des boucles
-    tau: float = 1.0         # inertie (1 = modulation instantanee)
+    theta0: float = 1.0
+    theta_min: float = 0.2
+    alpha: float = 0.0
+    beta: float = 0.0
+    tau: float = 1.0
+
+    def __post_init__(self) -> None:
+        positive("theta0", self.theta0)
+        positive("theta_min", self.theta_min)
+        if self.theta_min > self.theta0:
+            raise ValueError("theta_min ne peut pas depasser theta0")
+        non_negative("alpha", self.alpha)
+        non_negative("beta", self.beta)
+        unit_interval("tau", self.tau)
 
 
 def theta_target(p: ThetaParams, D_n: float, B: float) -> float:
@@ -108,13 +117,17 @@ def alpha_runaway(rho: float, D_crit: float, theta0: float,
 
 @dataclass
 class ControlParams:
-    chi: float = 0.1      # cout du controle sur la charge
-    kappa: float = 0.3    # effet restaurateur sur B
-    eta: float = 0.4      # effet degradant (quadratique) sur B
-    delta: float = 0.0    # remboursement induit par le controle
-    u_max: float = 1.0    # borne maximale de la commande
-    gain: float = 1.0     # gain du regulateur proportionnel sur (M_ref - M)
-    m_ref: float = 0.1    # marge visee par le regulateur
+    chi: float = 0.1
+    kappa: float = 0.3
+    eta: float = 0.4
+    delta: float = 0.0
+    u_max: float = 1.0
+    gain: float = 1.0
+    m_ref: float = 0.1
+
+    def __post_init__(self) -> None:
+        for name in ("chi", "kappa", "eta", "delta", "u_max", "gain"):
+            non_negative(name, getattr(self, name))
 
 
 def effective_load(L: float, U: float, p: ControlParams) -> float:
@@ -157,10 +170,16 @@ def control_command(M_prev: float, p: ControlParams) -> float:
 
 @dataclass
 class RecoveryParams:
-    delta_D: float = 0.0   # degradation sous dette chronique
-    delta_B: float = 0.0   # degradation sous boucles < B_crit
-    B_crit: float = 0.3    # seuil critique des boucles
-    R_min: float = 0.05    # plancher de recuperation
+    delta_D: float = 0.0
+    delta_B: float = 0.0
+    B_crit: float = 0.3
+    R_min: float = 0.05
+
+    def __post_init__(self) -> None:
+        non_negative("delta_D", self.delta_D)
+        non_negative("delta_B", self.delta_B)
+        unit_interval("B_crit", self.B_crit)
+        unit_interval("R_min", self.R_min)
 
 
 def effective_recovery(R_brut: float, D_n: float, B_eff: float,

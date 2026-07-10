@@ -91,16 +91,18 @@ def margin(L: float, D: float, theta: float, R: float, B: float,
 # ---------------------------------------------------------------------------
 
 def leak(L: float, R: float, B: float) -> float:
-    """Fuite de sous-recuperation : (1 - R) * L * (1 - B).
-
-    Active des que R < 1 ou B < 1 : c'est elle qui fait de la dette
-    un indicateur AVANCE (elle monte dans les zones saines).
-    """
+    """Fuite de sous-recuperation : (1 - R) * L * (1 - B)."""
+    if L < 0:
+        raise ValueError("L doit etre positif ou nul")
+    if not (0.0 <= R <= 1.0 and 0.0 <= B <= 1.0):
+        raise ValueError("R et B doivent etre bornes entre 0 et 1")
     return (1.0 - R) * L * (1.0 - B)
 
 
 def overflow(L: float, C: float) -> float:
     """Debordement instantane de la charge fraiche : max(0, L - C)."""
+    if L < 0 or C < 0:
+        raise ValueError("L et C doivent etre positifs ou nuls")
     return max(0.0, L - C)
 
 
@@ -145,7 +147,8 @@ DEFAULT_THRESHOLDS = {"viable": 0.30, "tension": 0.10,
 
 def classify(M: float, thresholds: dict | None = None) -> Zone:
     """Classe une valeur de M dans une zone systemique (sans hysteresis)."""
-    th = thresholds or DEFAULT_THRESHOLDS
+    from .validation import validate_thresholds
+    th = validate_thresholds(thresholds)
     if M > th["viable"]:
         return Zone.VIABLE
     if M > th["tension"]:
@@ -168,6 +171,12 @@ class HysteresisClassifier:
     _current: Zone | None = field(default=None, repr=False)
     _candidate: Zone | None = field(default=None, repr=False)
     _count: int = field(default=0, repr=False)
+
+    def __post_init__(self) -> None:
+        from .validation import validate_thresholds
+        if self.k < 1:
+            raise ValueError("k doit etre superieur ou egal a 1")
+        self.thresholds = validate_thresholds(self.thresholds)
 
     def update(self, M: float) -> Zone:
         raw = classify(M, self.thresholds)
