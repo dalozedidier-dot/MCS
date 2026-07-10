@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Simulateur interactif du Modèle de Cohérence Systémique : marge M(t), dette invisible D(t), zones ordinales.">
+  <title>MCS — Simulateur interactif</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="mcs-engine.js"></script>
+  <style>
+    .sim-shell{width:min(1180px,calc(100% - 40px));margin:24px auto 64px}
+    .sim-head{padding:34px 0 8px}
+    .sim-head h1{margin:.2em 0;font-size:clamp(1.6rem,3.4vw,2.4rem);color:var(--green)}
+    .sim-head p{max-width:70ch;color:var(--muted)}
+    .sim-grid{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+    @media(max-width:900px){.sim-grid{grid-template-columns:1fr}}
+    .panel{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+    .panel h2{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:.2em 0 .8em}
+    .ctl{margin:10px 0}
+    .ctl label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--ink)}
+    .ctl label output{font-variant-numeric:tabular-nums;color:var(--green);font-weight:600}
+    .ctl input[type=range]{width:100%;accent-color:var(--green2)}
+    .toggle{display:flex;align-items:center;gap:8px;font-size:.85rem;margin:12px 0 4px;font-weight:600;color:var(--green)}
+    .presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+    .presets button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:.78rem;cursor:pointer}
+    .presets button:hover{border-color:var(--green2);color:var(--green)}
+    .presets button.active{background:var(--green);color:#fff;border-color:var(--green)}
+    canvas{width:100%;height:auto;display:block}
+    .chart-title{font-size:.8rem;color:var(--muted);margin:14px 0 4px}
+    .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+    .readout div{background:var(--bg);border-radius:14px;padding:10px 12px}
+    .readout strong{display:block;font-size:1.15rem;color:var(--green);font-variant-numeric:tabular-nums}
+    .readout span{font-size:.72rem;color:var(--muted)}
+    .zone-pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:600;color:#fff}
+    .guard{background:var(--dark);color:#dfe8e3;border-radius:var(--radius);padding:18px 22px;margin-top:22px;font-size:.87rem}
+    .guard strong{color:var(--gold)}
+    .back{display:inline-block;margin-top:10px;font-size:.85rem;color:var(--green)}
+  </style>
+</head>
+<body>
+<div class="sim-shell">
+  <header class="sim-head">
+    <a class="back" href="index.html">&larr; Retour aux résultats</a>
+    <h1>Simulateur interactif</h1>
+    <p>Ce simulateur exécute <em>le même modèle</em> que le dépôt Python : le moteur JavaScript
+    (<code>mcs-engine.js</code>) est vérifié en intégration continue contre le moteur de référence,
+    trajectoire par trajectoire, à 10<sup>&minus;9</sup> près (<code>tests/test_js_parity.py</code>).
+    Ce n'est pas une illustration : c'est le modèle.</p>
+  </header>
+
+  <div class="sim-grid">
+    <aside class="panel">
+      <h2>Scénarios (§7)</h2>
+      <div class="presets" id="presets"></div>
+      <h2>Paramètres</h2>
+      <div id="controls"></div>
+    </aside>
+
+    <section class="panel">
+      <div class="chart-title">Marge systémique M(t) — bande : incertitude ±dM (10 % d'erreur par proxy, §4) ; fonds : zones ordinales</div>
+      <canvas id="chartM" width="820" height="330"></canvas>
+      <div class="chart-title">Dette invisible D(t) (trait plein) et capacité nominale Θ(t) (pointillé)</div>
+      <canvas id="chartD" width="820" height="200"></canvas>
+      <div class="readout">
+        <div><strong id="roM">—</strong><span>M final ± dM</span></div>
+        <div><strong id="roD">—</strong><span>dette finale D</span></div>
+        <div><strong id="roDstar">—</strong><span>niveau de repos D* (§3.1)</span></div>
+        <div><span class="zone-pill" id="roZone">—</span><span style="display:block;margin-top:6px">zone confirmée (hystérésis k=3)</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="guard">
+    <strong>Garde-fous de lecture (§9.8).</strong> M(t) est un indice <em>ordinal</em>, rapporté ici avec son
+    incertitude : aucune valeur isolée ne constitue un diagnostic. Les seuils de zones sont des hypothèses
+    pédagogiques à calibrer par domaine. Les proxys L, R, B doivent être définis <em>avant</em> tout calcul
+    (protocole gelé, §9.2). Et le modèle contient sa propre mise en garde : trop de contrôle dégrade les
+    boucles qu'il prétend restaurer (§6.3). Cadre exploratoire — ni diagnostic clinique, ni outil managérial validé.
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const state = {
+    L: 0.4, R: 0.7, B: 0.65, rho: 0.85, s: 0.0,
+    mu0: 0.0, gamma: 1.0, D_crit: 0.6,
+    useTheta: true, alpha: 0.25, beta: 0.15, tau: 0.15, theta_min: 0.3,
+    useControl: false, gain: 2.0, m_ref: 0.1,
+    shock: false, n: 60,
+  };
+
+  const SLIDERS = [
+    ["L", "Charge L", 0, 1.5, 0.01], ["R", "Récupération R", 0, 1, 0.01],
+    ["B", "Boucles de retour B", 0, 1, 0.01], ["rho", "Mémoire de dette ρ", 0, 0.99, 0.01],
+    ["s", "Substituabilité s", 0, 1, 0.05], ["mu0", "Remboursement μ₀ (§6.1)", 0, 1, 0.01],
+    ["D_crit", "Dette critique D_crit", 0.1, 2, 0.05],
+    ["alpha", "Usure α (§6.2)", 0, 1, 0.01], ["beta", "Usure β (§6.2)", 0, 1, 0.01],
+    ["tau", "Inertie τ (§6.2)", 0.01, 1, 0.01],
+    ["gain", "Gain de contrôle (§6.3)", 0, 6, 0.1], ["m_ref", "Marge visée m_ref", -0.1, 0.5, 0.01],
+    ["n", "Horizon (pas)", 20, 200, 1],
+  ];
+  const TOGGLES = [["useTheta", "Θ évolutif (§6.2)"], ["useControl", "Contrôle (§6.3)"],
+                   ["shock", "Choc de charge (t = 5–9)"]];
+
+  const PRESETS = {
+    "Dégradation lente": {L:0.4,R:0.7,B:0.65,rho:0.85,mu0:0,D_crit:0.6,useTheta:true,alpha:0.25,beta:0.15,tau:0.15,useControl:false,shock:false,n:60},
+    "Récupération progressive": {L:0.35,R:0.9,B:0.85,rho:0.7,mu0:0.5,D_crit:0.5,useTheta:false,useControl:false,shock:true,n:40},
+    "Contrôle mesuré": {L:0.45,R:0.7,B:0.6,rho:0.8,mu0:0.3,D_crit:0.6,useTheta:false,useControl:true,gain:1.0,m_ref:0.2,shock:false,n:60},
+    "Surcontrôle": {L:0.45,R:0.7,B:0.6,rho:0.8,mu0:0.3,D_crit:0.6,useTheta:false,useControl:true,gain:5.0,m_ref:0.2,shock:false,n:60},
+    "Récupération en chambre": {L:0.4,R:0.85,B:0.25,rho:0.8,mu0:0,D_crit:0.6,useTheta:false,useControl:false,shock:false,n:60},
+  };
+
+  const ZCOLORS = {coherence_viable:"#2f7559", tension_constructive:"#c49a54",
+                   saturation:"#c07b30", pre_rupture:"#a4442f", rupture:"#6d1f1f"};
+  const ZLABEL = {coherence_viable:"cohérence viable", tension_constructive:"tension constructive",
+                  saturation:"saturation", pre_rupture:"pré-rupture", rupture:"rupture"};
+
+  function buildControls() {
+    const host = $("controls"); host.innerHTML = "";
+    TOGGLES.forEach(([k, lbl]) => {
+      const d = document.createElement("label"); d.className = "toggle";
+      const c = document.createElement("input"); c.type = "checkbox"; c.checked = state[k];
+      c.addEventListener("input", () => { state[k] = c.checked; render(); });
+      d.append(c, document.createTextNode(lbl)); host.append(d);
+    });
+    SLIDERS.forEach(([k, lbl, lo, hi, st]) => {
+      const wrap = document.createElement("div"); wrap.className = "ctl";
+      const lab = document.createElement("label");
+      const out = document.createElement("output"); out.textContent = state[k];
+      lab.append(document.createTextNode(lbl), out);
+      const r = document.createElement("input");
+      Object.assign(r, {type: "range", min: lo, max: hi, step: st, value: state[k]});
+      r.addEventListener("input", () => {
+        state[k] = Number(r.value); out.textContent = r.value;
+        document.querySelectorAll("#presets button").forEach(b => b.classList.remove("active"));
+        render();
+      });
+      wrap.append(lab, r); host.append(wrap);
+      wrap.dataset.key = k;
+    });
+  }
+
+  function buildPresets() {
+    const host = $("presets");
+    Object.keys(PRESETS).forEach((name, i) => {
+      const b = document.createElement("button"); b.textContent = name;
+      if (i === 0) b.classList.add("active");
+      b.addEventListener("click", () => {
+        Object.assign(state, PRESETS[name]);
+        document.querySelectorAll("#presets button").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        buildControls(); render();
+      });
+      host.append(b);
+    });
+  }
+
+  function currentConfig() {
+    const cfg = {R: state.R, B: state.B, rho: state.rho, s: state.s,
+                 mu0: state.mu0, gamma: state.gamma, D_crit: state.D_crit};
+    cfg.L = state.shock
+      ? (t => (t >= 5 && t < 10 ? Math.max(state.L, 0.75) : state.L))
+      : state.L;
+    if (state.useTheta) cfg.theta_params = {theta0: 1.0, theta_min: state.theta_min,
+      alpha: state.alpha, beta: state.beta, tau: state.tau};
+    if (state.useControl) cfg.control = {chi: 0.15, kappa: 0.4, eta: 0.5, delta: 0.05,
+      u_max: 1.5, gain: state.gain, m_ref: state.m_ref};
+    return cfg;
+  }
+
+  function drawM(res) {
+    const cv = $("chartM"), ctx = cv.getContext("2d");
+    const W = cv.width, H = cv.height, padL = 46, padB = 24, padT = 10;
+    ctx.clearRect(0, 0, W, H);
+    const finite = res.M.filter(Number.isFinite);
+    const yMin = Math.min(-0.6, ...finite), yMax = Math.max(1.0, ...finite);
+    const x = t => padL + (W - padL - 8) * t / (res.t.length - 1);
+    const y = v => padT + (H - padT - padB) * (yMax - v) / (yMax - yMin);
+    // fonds de zones
+    const bands = [[yMax, 0.30, "coherence_viable"], [0.30, 0.10, "tension_constructive"],
+                   [0.10, 0.05, "saturation"], [0.05, -0.05, "pre_rupture"],
+                   [-0.05, yMin, "rupture"]];
+    bands.forEach(([a, b, z]) => {
+      ctx.fillStyle = ZCOLORS[z] + "22";
+      ctx.fillRect(padL, y(a), W - padL - 8, y(b) - y(a));
+    });
+    // bande d'incertitude
+    ctx.beginPath();
+    const err = res.M.map((m, i) => Number.isFinite(m)
+      ? MCS.marginUncertainty(m, res.A[i], res.C[i], 0.1, 0, 0.1, 0.1) : 0);
+    res.t.forEach((t, i) => { const v = Math.min(yMax, res.M[i] + err[i]);
+      i ? ctx.lineTo(x(t), y(v)) : ctx.moveTo(x(t), y(v)); });
+    for (let i = res.t.length - 1; i >= 0; i--) {
+      const v = Math.max(yMin, (Number.isFinite(res.M[i]) ? res.M[i] : yMin) - err[i]);
+      ctx.lineTo(x(res.t[i]), y(v));
+    }
+    ctx.closePath(); ctx.fillStyle = "rgba(32,79,62,.18)"; ctx.fill();
+    // courbe M
+    ctx.beginPath(); ctx.strokeStyle = "#204f3e"; ctx.lineWidth = 2.2;
+    res.t.forEach((t, i) => { const v = Number.isFinite(res.M[i]) ? res.M[i] : yMin;
+      i ? ctx.lineTo(x(t), y(Math.max(yMin, Math.min(yMax, v))))
+        : ctx.moveTo(x(t), y(v)); });
+    ctx.stroke();
+    // axes
+    ctx.fillStyle = "#65726d"; ctx.font = "11px Inter, sans-serif";
+    [1, 0.5, 0.3, 0.1, 0, -0.5].filter(v => v >= yMin && v <= yMax).forEach(v => {
+      ctx.fillText(v.toFixed(1), 8, y(v) + 4);
+      ctx.strokeStyle = "rgba(23,35,31,.08)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, y(v)); ctx.lineTo(W - 8, y(v)); ctx.stroke();
+    });
+    ctx.fillText("t = 0", padL, H - 6);
+    ctx.fillText("t = " + (res.t.length - 1), W - 54, H - 6);
+  }
+
+  function drawD(res) {
+    const cv = $("chartD"), ctx = cv.getContext("2d");
+    const W = cv.width, H = cv.height, padL = 46, padB = 20, padT = 8;
+    ctx.clearRect(0, 0, W, H);
+    const yMax = Math.max(1.0, ...res.D, ...res.theta) * 1.05;
+    const x = t => padL + (W - padL - 8) * t / (res.t.length - 1);
+    const y = v => padT + (H - padT - padB) * (yMax - v) / yMax;
+    ctx.strokeStyle = "rgba(23,35,31,.15)";
+    ctx.beginPath(); ctx.moveTo(padL, y(0)); ctx.lineTo(W - 8, y(0)); ctx.stroke();
+    // D_crit
+    ctx.setLineDash([2, 4]); ctx.strokeStyle = "#a4442f";
+    ctx.beginPath(); ctx.moveTo(padL, y(state.D_crit)); ctx.lineTo(W - 8, y(state.D_crit)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.strokeStyle = "#c49a54"; ctx.lineWidth = 2.2;
+    res.t.forEach((t, i) => i ? ctx.lineTo(x(t), y(res.D[i])) : ctx.moveTo(x(t), y(res.D[i])));
+    ctx.stroke();
+    ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.strokeStyle = "#204f3e"; ctx.lineWidth = 1.8;
+    res.t.forEach((t, i) => i ? ctx.lineTo(x(t), y(res.theta[i])) : ctx.moveTo(x(t), y(res.theta[i])));
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "#65726d"; ctx.font = "11px Inter, sans-serif";
+    [0, state.D_crit, 1].forEach(v => ctx.fillText(v.toFixed(1), 10, y(v) + 4));
+  }
+
+  function render() {
+    const cfg = currentConfig();
+    const res = MCS.simulate(cfg, Math.round(state.n));
+    drawM(res); drawD(res);
+    const last = res.t.length - 1;
+    const err = Number.isFinite(res.M[last])
+      ? MCS.marginUncertainty(res.M[last], res.A[last], res.C[last], 0.1, 0, 0.1, 0.1) : Infinity;
+    $("roM").textContent = Number.isFinite(res.M[last])
+      ? res.M[last].toFixed(3) + " ± " + err.toFixed(3) : "−∞";
+    $("roD").textContent = res.D[last].toFixed(3);
+    $("roDstar").textContent = state.rho < 1
+      ? MCS.debtRestLevel(typeof cfg.L === "function" ? cfg.L(last) : cfg.L,
+                          state.R, state.B, state.rho).toFixed(3) : "∞";
+    const z = res.zone[last];
+    const pill = $("roZone");
+    pill.textContent = ZLABEL[z]; pill.style.background = ZCOLORS[z];
+  }
+
+  buildPresets(); buildControls(); render();
+})();
+</script>
+</body>
+</html>

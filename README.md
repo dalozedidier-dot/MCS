@@ -83,6 +83,19 @@ streamlit run app/streamlit_app.py
 - **Protocole** : refus de calculer M sans gel préalable, détection de toute altération post-gel, aller-retour YAML/JSON.
 - **Falsification** : dégradation silencieuse détectée par le MCS et invisible à la charge seule ; choc bref absorbé sans alerte durable ; avance de signal sur la rupture.
 
+## Simulateur interactif (Phase 4)
+
+`docs/simulateur.html` — hébergé sur GitHub Pages — exécute **le même modèle** que ce dépôt : le moteur `docs/mcs-engine.js` est vérifié en CI contre le moteur Python, trajectoire par trajectoire, à 1e-9 près (`tests/test_js_parity.py`). Cinq scénarios du §7 préchargés, incertitude ±dM affichée, garde-fous du §9.8 dans l'interface.
+
+## Démonstrations de cohérence interne (`mcs.experiments`)
+
+```bash
+python scripts/run_demo_dossier.py    # irreversibilite.png + carte_regime.png + demonstration.md
+```
+
+- **Irréversibilité** : sous rampe de charge aller-retour symétrique, M(L) ne repasse pas par le même chemin ; le témoin sans mémoire écrase la boucle — la trace vient de la dette et de l'usure de Θ.
+- **Garde d'emballement** : la pente de la carte de dette, mesurée en simulation, suit exactement la frontière analytique α*(ρ) = (1−ρ)·D_crit/(Θ₀RB).
+
 ## Phases 1–3 : robustesse, protocole, falsification
 
 ```bash

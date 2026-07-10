@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0 — 2026-07-10
+
+Axe démonstration.
+
+### Simulateur interactif hébergé (Phase 4 partielle)
+- `docs/mcs-engine.js` : portage JavaScript du noyau et des extensions 6.1–6.3 et 6.5, boucle de simulation dans l'ordre exact du §5.1. La fidélité n'est pas promise mais testée : `tests/test_js_parity.py` exécute le moteur sous Node et compare M, D, Θ, C, U, μ et les zones au moteur Python à 1e-9 près sur cinq configurations couvrant toutes les extensions (CI).
+- `docs/simulateur.html` : simulateur autonome sans dépendance — curseurs, bande d'incertitude ±dM (§4), fonds de zones ordinales, hystérésis k = 3, D* affiché, 5 scénarios du §7 préchargés, garde-fous d'interprétation du §9.8 affichés dans l'interface (exigence de la Phase 4).
+
+### `mcs.experiments` — démonstrations de cohérence interne
+- `hysteresis_loop` : irréversibilité — sous rampe de charge aller-retour symétrique, M(L) ne revient pas par le même chemin ; l'aire de la boucle quantifie la mémoire du passage ; témoin sans mémoire (ρ = 0, Θ figé) à boucle écrasée prouvant que la trace vient de la dette et de l'usure.
+- `perturbation_slope` / `regime_map` : la pente de la carte de dette mesurée à travers `simulate()` (deux dettes initiales voisines, régime de débordement non saturé) coïncide avec la valeur propre ρ + Θ₀RBα/D_crit à 1e-6 près, et le verdict amplification/amortissement suit la frontière analytique α*(ρ) à 100 % hors bande numérique.
+- Figures `reports/irreversibilite.png` et `reports/carte_regime.png` (+ copies `docs/assets/`), synthèse `reports/demonstration.md`, script `scripts/run_demo_dossier.py` ajouté à la CI.
+- Suite de tests : 76 → 87.
+
+
 ## 0.3.0 — 2026-07-10
 
 ### Cohérence des moteurs

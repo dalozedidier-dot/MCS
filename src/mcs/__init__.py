@@ -32,6 +32,15 @@ from .core import (
     overflow,
     total_load,
 )
+from .experiments import (
+    HysteresisLoop,
+    RegimeMap,
+    hysteresis_loop,
+    load_ramp,
+    memoryless_config,
+    perturbation_slope,
+    regime_map,
+)
 from .extensions import (
     ControlParams,
     RecoveryParams,
@@ -62,7 +71,7 @@ from .robustness import (
 )
 from .simulator import SimConfig, SimResult, simulate
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __all__ = [
     "DEFAULT_THRESHOLDS", "HysteresisClassifier", "Zone",
     "bounded_margin_index", "capacity", "classify", "debt_rest_level",
@@ -80,4 +89,6 @@ __all__ = [
     "network_stability", "sensitivity_tornado", "spectral_radius",
     "ComparisonRecord", "FalsificationRecord", "compare_detectors",
     "falsification_report", "falsification_run", "mcs_alarm",
+    "HysteresisLoop", "RegimeMap", "hysteresis_loop", "load_ramp",
+    "memoryless_config", "perturbation_slope", "regime_map",
 ]

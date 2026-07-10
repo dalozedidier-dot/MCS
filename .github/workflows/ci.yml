@@ -23,6 +23,7 @@ jobs:
       - run: pytest --cov=mcs --cov-report=term-missing
       - run: python scripts/run_robustness.py
       - run: python scripts/run_protocol_demo.py
+      - run: python scripts/run_demo_dossier.py
 
   package:
     runs-on: ubuntu-latest
