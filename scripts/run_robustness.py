@@ -16,6 +16,7 @@ Requiert : pip install -e ".[viz]"
 from __future__ import annotations
 
 import random
+import shutil
 from dataclasses import replace
 from pathlib import Path
 
@@ -36,8 +37,11 @@ from mcs.robustness import (
     sensitivity_tornado,
 )
 
-OUT = Path(__file__).resolve().parent.parent / "reports"
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "reports"
+ASSETS = ROOT / "docs" / "assets"
 OUT.mkdir(exist_ok=True)
+ASSETS.mkdir(parents=True, exist_ok=True)
 lines = ["# Rapport de robustesse MCS - Phase 1", ""]
 
 
@@ -80,7 +84,7 @@ for y, _lbl in ((0.30, "viable"), (0.10, "tension"), (0.05, "saturation"), (-0.0
     ax.axhline(y, color="grey", ls=":", lw=0.7)
 ax.set_xlabel("t")
 ax.set_ylabel("M(t)")
-ax.set_title("Degradation lente sous bruit multiplicatif (300 runs)")
+ax.set_title("40 trajectoires affichees parmi 300 simulations")
 ax.legend()
 fig.tight_layout()
 fig.savefig(OUT / "monte_carlo.png", dpi=150)
@@ -102,7 +106,7 @@ fig, ax = plt.subplots(figsize=(6, 3.5))
 ax.plot([r.k for r in recs], [r.suppression * 100 for r in recs], "o-", color="#2f6b4f")
 ax.set_xlabel("k (pas de confirmation)")
 ax.set_ylabel("fausses alertes supprimees (%)")
-ax.set_title("Calibration de l'hysteresis (systeme stationnaire bruite)")
+ax.set_title("Reduction des transitions parasites par hysteresis")
 fig.tight_layout()
 fig.savefig(OUT / "hysteresis_k.png", dpi=150)
 plt.close(fig)
@@ -150,7 +154,7 @@ ax2.bar(
     label="noeuds en (pre-)rupture",
 )
 ax2.set_ylabel("noeuds casses / 3")
-ax1.set_title("Cascade : la bascule suit le seuil rho(J) = 1 (§ 6.4)")
+ax1.set_title("Dette bornee (rho(J) < 1) et viabilite de M sont distinctes (§ 6.4)")
 fig.tight_layout()
 fig.savefig(OUT / "cascade.png", dpi=150)
 plt.close(fig)
@@ -177,31 +181,48 @@ lines += [
     "",
 ]
 
-# 5. Oscillations pres de mu* ---------------------------------------------------
+# 5. Convergence residuelle pres de mu* ---------------------------------------------------
 base = SimConfig(L=0.30, R=0.7, B=0.6, rho=0.9, D_crit=0.6, gamma=1.0)
 C0 = 1.0 * 0.7 * 0.6
 mu_star = viability_repayment_threshold(0.30, 0.7, 0.6, C0)
 mus = [mu_star * f for f in (0.5, 0.8, 0.95, 1.0, 1.05, 1.2, 1.5, 2.0)]
 amps = []
+sign_changes = []
 for mu in mus:
     res = simulate(replace(base, mu0=mu), 200)
-    amps.append(oscillation_score(res.D, burn_in=60)["amplitude"])
+    score = oscillation_score(res.D, burn_in=60)
+    amps.append(score["amplitude"])
+    sign_changes.append(score["sign_changes"])
 fig, ax = plt.subplots(figsize=(6, 3.5))
 ax.plot([m / mu_star for m in mus], amps, "o-", color="#2f6b4f")
 ax.set_xlabel("mu0 / mu*")
-ax.set_ylabel("amplitude residuelle de D")
-ax.set_title("Comportement autour de la condition de viabilite mu* (§ 9.6)")
+ax.set_ylabel("demi-etendue residuelle de D")
+ax.set_title("Convergence residuelle autour de la condition mu* (§ 9.6)")
 fig.tight_layout()
 fig.savefig(OUT / "oscillations.png", dpi=150)
 plt.close(fig)
 lines += [
-    "## Autour de mu*",
+    "## Convergence autour de mu*",
     f"mu* = {mu_star:.3f} au point de fonctionnement. Amplitudes "
     "residuelles de D apres transitoire : "
     + ", ".join(f"{m / mu_star:.2f}x -> {a:.4f}" for m, a in zip(mus, amps, strict=True))
     + ".",
+    "Changements de signe de la derivee apres transitoire : "
+    + ", ".join(str(x) for x in sign_changes)
+    + ". Aucun cycle n'est detecte dans ce balayage ; la figure mesure "
+    "une amplitude residuelle de convergence, pas une oscillation entretenue.",
     "",
 ]
+
+# Keep the public site strictly synchronized with the freshly generated reports.
+for figure_name in (
+    "tornado.png",
+    "monte_carlo.png",
+    "hysteresis_k.png",
+    "cascade.png",
+    "oscillations.png",
+):
+    shutil.copy2(OUT / figure_name, ASSETS / figure_name)
 
 (OUT / "robustesse.md").write_text("\n".join(lines), encoding="utf-8")
 

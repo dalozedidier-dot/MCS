@@ -1,0 +1,60 @@
+{
+  "figures": [
+    {
+      "figure": "benchmark.png",
+      "generator": "scripts/run_benchmark.py",
+      "report_sha256": "b863ff60260d2e4d101de2b7f92c9d6cc53977dbb3db46dc521afd0697fc28c3",
+      "public_sha256": "b863ff60260d2e4d101de2b7f92c9d6cc53977dbb3db46dc521afd0697fc28c3",
+      "byte_identical": true
+    },
+    {
+      "figure": "monte_carlo.png",
+      "generator": "scripts/run_robustness.py",
+      "report_sha256": "51b4607c3bbc4cb966192f2b8c1ae2e0657dc22082929d977529f2797294b87c",
+      "public_sha256": "51b4607c3bbc4cb966192f2b8c1ae2e0657dc22082929d977529f2797294b87c",
+      "byte_identical": true
+    },
+    {
+      "figure": "hysteresis_k.png",
+      "generator": "scripts/run_robustness.py",
+      "report_sha256": "e45695ff4e966117d5cac5d9778d812f039d981c865fd464ce92fdd828b73b71",
+      "public_sha256": "e45695ff4e966117d5cac5d9778d812f039d981c865fd464ce92fdd828b73b71",
+      "byte_identical": true
+    },
+    {
+      "figure": "cascade.png",
+      "generator": "scripts/run_robustness.py",
+      "report_sha256": "d47fcdb9bc102d5c40284b22429ee21049233bf4ebb960603a7efc96b7ece225",
+      "public_sha256": "d47fcdb9bc102d5c40284b22429ee21049233bf4ebb960603a7efc96b7ece225",
+      "byte_identical": true
+    },
+    {
+      "figure": "tornado.png",
+      "generator": "scripts/run_robustness.py",
+      "report_sha256": "ab96894764292db093fc74db17205b747dfd0ecf08edca388991bf23ae1b036a",
+      "public_sha256": "ab96894764292db093fc74db17205b747dfd0ecf08edca388991bf23ae1b036a",
+      "byte_identical": true
+    },
+    {
+      "figure": "oscillations.png",
+      "generator": "scripts/run_robustness.py",
+      "report_sha256": "789e2301a40ba35e711c8b23a14702dac118d26d539f27b441577feb5e7c1e0b",
+      "public_sha256": "789e2301a40ba35e711c8b23a14702dac118d26d539f27b441577feb5e7c1e0b",
+      "byte_identical": true
+    },
+    {
+      "figure": "irreversibilite.png",
+      "generator": "scripts/run_demo_dossier.py",
+      "report_sha256": "3bf7202f247f5b2bbe9e2a8eda33c8f876dffdc4927edd3a31e1b8e1a4291d4c",
+      "public_sha256": "3bf7202f247f5b2bbe9e2a8eda33c8f876dffdc4927edd3a31e1b8e1a4291d4c",
+      "byte_identical": true
+    },
+    {
+      "figure": "carte_regime.png",
+      "generator": "scripts/run_demo_dossier.py",
+      "report_sha256": "957d4897da2cc28cd5eea96c8e59eee508a43a461618dedf8135191b3d4ab5c3",
+      "public_sha256": "957d4897da2cc28cd5eea96c8e59eee508a43a461618dedf8135191b3d4ab5c3",
+      "byte_identical": true
+    }
+  ]
+}

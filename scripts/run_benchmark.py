@@ -36,20 +36,28 @@ colors = [
     "#2f6b4f" if n == "mcs_complet" else ("#b8892b" if n.startswith("mcs_") else "#9aa5a0")
     for n in names
 ]
-fig, ax = plt.subplots(figsize=(8, 4.6))
+fig, ax = plt.subplots(figsize=(9.2, 4.8))
 bars = ax.barh(names, leads, color=colors)
+max_lead = max(leads, default=1.0)
+# Reserve a dedicated right-hand annotation zone so sensitivity labels
+# never leave the plotting area, even for the longest bar.
+ax.set_xlim(0, max_lead + 4.2)
 for b, s in zip(bars, sens, strict=True):
     ax.text(
-        b.get_width() + 0.25,
+        min(b.get_width() + 0.25, max_lead + 3.15),
         b.get_y() + b.get_height() / 2,
         f"sens. {s:.2f}",
         va="center",
         fontsize=8,
         color="#65726d",
     )
-ax.set_xlabel("delai median d'alerte (pas) - FPR cible identique 10 %")
+ax.set_xlabel(
+    "avance mediane avant evenement (pas, parmi les evenements detectes)\n"
+    "seuils calibres vers un FPR cible commun de 10 %"
+)
 ax.set_title(
-    f"Benchmark aveugle : {res.n_validation} trajectoires de validation, parametres pre-enregistres"
+    f"Benchmark aveugle — {res.n_validation} trajectoires de validation\n"
+    "parametres fixes avant evaluation"
 )
 fig.tight_layout()
 fig.savefig(OUT / "benchmark.png", dpi=150)

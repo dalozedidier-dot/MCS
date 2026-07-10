@@ -31,5 +31,6 @@ k = 3 (defaut) supprime deja 95% des fausses alertes ; le cout est le delai de d
 
 Le verdict spectral (exact) raffine la condition de somme de ligne du noyau, qui n'est qu'une majoration. Nuance importante revelee par le balayage : rho(J) < 1 garantit une dette BORNEE, pas une marge viable - entre les deux seuils (ici couplage 0.1-0.2), la dette converge vers un niveau de repos assez haut pour casser les noeuds. La stabilite de la carte de dette et la viabilite de M sont deux questions distinctes.
 
-## Autour de mu*
+## Convergence autour de mu*
 mu* = 0.300 au point de fonctionnement. Amplitudes residuelles de D apres transitoire : 0.50x -> 0.0005, 0.80x -> 0.0007, 0.95x -> 0.0008, 1.00x -> 0.0009, 1.05x -> 0.0009, 1.20x -> 0.0011, 1.50x -> 0.0000, 2.00x -> 0.0000.
+Changements de signe de la derivee apres transitoire : 0, 0, 0, 0, 0, 0, 0, 0. Aucun cycle n'est detecte dans ce balayage ; la figure mesure une amplitude residuelle de convergence, pas une oscillation entretenue.

@@ -31,6 +31,7 @@ jobs:
       - run: python scripts/run_demo_dossier.py
       - run: python scripts/run_benchmark.py
       - run: python scripts/build_site_data.py
+      - run: python scripts/build_figure_manifest.py
 
   package:
     runs-on: ubuntu-latest

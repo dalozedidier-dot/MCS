@@ -1,5 +1,15 @@
 # Changelog
 
+
+## [0.6.1] - 2026-07-10
+
+### Corrige
+- réserve une zone d’annotation dans la figure du benchmark afin que les sensibilités ne dépassent plus à droite ;
+- précise que le délai médian du benchmark est conditionnel aux événements effectivement détectés ;
+- précise que la figure Monte Carlo affiche 40 trajectoires visuelles parmi 300 simulations évaluées ;
+- corrige le titre du graphique réseau : `rho(J) < 1` garantit une dette bornée, pas nécessairement une marge viable ;
+- renomme la figure « Oscillations » en « Convergence près de μ* » : aucun changement de signe n’est détecté après transitoire dans ce balayage.
+
 ## 0.6.0 — 2026-07-10
 
 Mise à jour de consolidation méthodologique et de la GitHub Pages.
