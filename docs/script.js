@@ -24,3 +24,18 @@ if (location.hostname.endsWith('github.io')) {
     a.href = `https://github.com/${owner}/${repo}`;
   });
 }
+
+
+// Injection des metriques depuis les artefacts (audit niveau H) :
+// la page n'affiche aucun nombre saisi a la main.
+fetch('data/results.json').then(r => r.json()).then(d => {
+  const set = (k, v) => document.querySelectorAll(`[data-metric="${k}"]`)
+    .forEach(el => { el.textContent = v; });
+  const counter = document.querySelector('[data-metric="n_tests"]');
+  if (counter) counter.dataset.count = d.n_tests;
+  set('falsification', `${d.falsification_pass} / ${d.falsification_total}`);
+  set('python_ci', d.python_ci);
+  set('version', 'v' + d.version);
+  const when = new Date(d.generated_at).toLocaleDateString('fr-FR');
+  set('provenance', `commit ${String(d.commit).slice(0, 8)}, ${when}`);
+}).catch(() => { /* previsualisation locale sans serveur : valeurs par defaut */ });

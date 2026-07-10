@@ -1,0 +1,436 @@
+{
+  "target_fpr": 0.1,
+  "n_calibration": 150,
+  "n_validation": 300,
+  "detectors": [
+    {
+      "name": "seuil_L",
+      "threshold": 0.9903257199745172,
+      "sensitivity": 0.3652694610778443,
+      "false_alarm_rate": 0.13533834586466165,
+      "precision": 0.7721518987341772,
+      "recall": 0.3652694610778443,
+      "median_lead": 2.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 0.8305084745762712,
+          "false_alarm_rate": null,
+          "median_lead": 2.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 0.23529411764705882,
+          "false_alarm_rate": 0.7142857142857143,
+          "median_lead": 5.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": null,
+          "median_lead": null,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.2,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "moyenne_mobile",
+      "threshold": 0.8100556673799042,
+      "sensitivity": 0.41916167664670656,
+      "false_alarm_rate": 0.06015037593984962,
+      "precision": 0.8974358974358975,
+      "recall": 0.41916167664670656,
+      "median_lead": 3.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 0.6779661016949152,
+          "false_alarm_rate": null,
+          "median_lead": 2.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 0.5882352941176471,
+          "false_alarm_rate": 0.7142857142857143,
+          "median_lead": 8.5,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": null,
+          "median_lead": null,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.046153846153846156,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "ewma",
+      "threshold": 0.7876566088034571,
+      "sensitivity": 0.4550898203592814,
+      "false_alarm_rate": 0.09022556390977443,
+      "precision": 0.8636363636363636,
+      "recall": 0.4550898203592814,
+      "median_lead": 3.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 0.711864406779661,
+          "false_alarm_rate": null,
+          "median_lead": 1.5,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 0.6666666666666666,
+          "false_alarm_rate": 1.0,
+          "median_lead": 10.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": null,
+          "median_lead": null,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.07692307692307693,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "pente_L",
+      "threshold": 0.10553242998656452,
+      "sensitivity": 0.2634730538922156,
+      "false_alarm_rate": 0.14285714285714285,
+      "precision": 0.6984126984126984,
+      "recall": 0.2634730538922156,
+      "median_lead": 1.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 0.7457627118644068,
+          "false_alarm_rate": null,
+          "median_lead": 1.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": null,
+          "median_lead": null,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.2923076923076923,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "cusum",
+      "threshold": 11.997119302505094,
+      "sensitivity": 0.1497005988023952,
+      "false_alarm_rate": 0.14285714285714285,
+      "precision": 0.5681818181818182,
+      "recall": 0.1497005988023952,
+      "median_lead": 14.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.19672131147540983,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": null,
+          "median_lead": null,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 0.49019607843137253,
+          "false_alarm_rate": 1.0,
+          "median_lead": 14.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 0.0,
+          "false_alarm_rate": null,
+          "median_lead": null,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "mcs_sans_dette",
+      "threshold": 0.36380815158704194,
+      "sensitivity": 0.8622754491017964,
+      "false_alarm_rate": 0.12030075187969924,
+      "precision": 0.9,
+      "recall": 0.8622754491017964,
+      "median_lead": 5.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 4.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 0.9411764705882353,
+          "false_alarm_rate": 1.0,
+          "median_lead": 14.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 0.6491228070175439,
+          "false_alarm_rate": null,
+          "median_lead": 4.0,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.13846153846153847,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "mcs_sans_debordement",
+      "threshold": 0.45915529848762904,
+      "sensitivity": 1.0,
+      "false_alarm_rate": 0.10526315789473684,
+      "precision": 0.9226519337016574,
+      "recall": 1.0,
+      "median_lead": 15.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.03278688524590164,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 4.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": 1.0,
+          "median_lead": 27.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 18.0,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.07692307692307693,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "mcs_fuite_additive",
+      "threshold": 1.7277251378763094,
+      "sensitivity": 1.0,
+      "false_alarm_rate": 0.09022556390977443,
+      "precision": 0.9329608938547486,
+      "recall": 1.0,
+      "median_lead": 15.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.06557377049180328,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 3.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": 1.0,
+          "median_lead": 27.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 16.0,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.015384615384615385,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    },
+    {
+      "name": "mcs_complet",
+      "threshold": 0.809159704754999,
+      "sensitivity": 1.0,
+      "false_alarm_rate": 0.09022556390977443,
+      "precision": 0.9329608938547486,
+      "recall": 1.0,
+      "median_lead": 11.0,
+      "by_family": {
+        "recovery": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.0,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 61
+        },
+        "regime_switch": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 3.0,
+          "n_event": 59,
+          "n_no_event": 0
+        },
+        "ramp_to_break": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": 1.0,
+          "median_lead": 22.0,
+          "n_event": 51,
+          "n_no_event": 7
+        },
+        "silent_erosion": {
+          "sensitivity": 1.0,
+          "false_alarm_rate": null,
+          "median_lead": 12.0,
+          "n_event": 57,
+          "n_no_event": 0
+        },
+        "false_shock": {
+          "sensitivity": null,
+          "false_alarm_rate": 0.07692307692307693,
+          "median_lead": null,
+          "n_event": 0,
+          "n_no_event": 65
+        }
+      }
+    }
+  ],
+  "headline": {
+    "critere": "gain median APPARIE de delai d'alerte du MCS complet sur la baseline la plus defavorable (detection manquee = avance nulle), a taux de fausses alertes calibre identique (10%)",
+    "gains_apparies_par_baseline": {
+      "seuil_L": 11.0,
+      "moyenne_mobile": 11.0,
+      "ewma": 11.0,
+      "pente_L": 11.0,
+      "cusum": 11.0
+    },
+    "baseline_la_plus_defavorable": "seuil_L",
+    "gain_median": 11.0,
+    "delai_median_mcs": 11.0,
+    "sensibilite_mcs": 1.0,
+    "fpr_mcs_observe": 0.09022556390977443
+  }
+}

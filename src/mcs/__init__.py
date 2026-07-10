@@ -16,6 +16,14 @@ from .baselines import (
     falsification_run,
     mcs_alarm,
 )
+from .benchmark import (
+    BenchmarkResult,
+    Trajectory,
+    benchmark_markdown,
+    generate,
+    paired_median_gain,
+    run_benchmark,
+)
 from .core import (
     DEFAULT_THRESHOLDS,
     HysteresisClassifier,
@@ -71,7 +79,7 @@ from .robustness import (
 )
 from .simulator import SimConfig, SimResult, simulate
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 __all__ = [
     "DEFAULT_THRESHOLDS", "HysteresisClassifier", "Zone",
     "bounded_margin_index", "capacity", "classify", "debt_rest_level",
@@ -91,4 +99,6 @@ __all__ = [
     "falsification_report", "falsification_run", "mcs_alarm",
     "HysteresisLoop", "RegimeMap", "hysteresis_loop", "load_ramp",
     "memoryless_config", "perturbation_slope", "regime_map",
+    "BenchmarkResult", "Trajectory", "benchmark_markdown", "generate",
+    "paired_median_gain", "run_benchmark",
 ]

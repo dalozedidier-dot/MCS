@@ -17,6 +17,7 @@ import shutil
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -27,7 +28,8 @@ from mcs.extensions import ThetaParams
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "reports"
 ASSETS = ROOT / "docs" / "assets"
-OUT.mkdir(exist_ok=True); ASSETS.mkdir(exist_ok=True)
+OUT.mkdir(exist_ok=True)
+ASSETS.mkdir(exist_ok=True)
 
 # 1. Irreversibilite ----------------------------------------------------------
 cfg = SimConfig(R=0.7, B=0.65, rho=0.9, D_crit=0.6, mu0=0.15,
@@ -48,10 +50,12 @@ ax.plot(L_axis, temoin.M_up, color="grey", lw=1, ls=":")
 ax.plot(L_axis, temoin.M_down, color="grey", lw=1, ls=":",
         label="témoin sans mémoire (ρ = 0, Θ figé)")
 ax.axhline(0, color="grey", lw=0.6)
-ax.set_xlabel("charge L"); ax.set_ylabel("marge M")
+ax.set_xlabel("charge L")
+ax.set_ylabel("marge M")
 ax.set_title("Irréversibilité : la trajectoire ne repasse pas par le même chemin")
 ax.legend(fontsize=8)
-fig.tight_layout(); fig.savefig(OUT / "irreversibilite.png", dpi=150)
+fig.tight_layout()
+fig.savefig(OUT / "irreversibilite.png", dpi=150)
 plt.close(fig)
 
 # 2. Carte de regime ------------------------------------------------------------
@@ -63,12 +67,14 @@ im = ax.imshow(rm.slopes, origin="lower", aspect="auto",
 ax.plot(rm.alpha_star, rm.rhos, color="#10201a", lw=2.2,
         label="frontière analytique α*(ρ) = (1−ρ)·D_crit / (Θ₀RB)")
 ax.set_xlim(rm.alphas[0], rm.alphas[-1])
-ax.set_xlabel("sensibilité d'usure α"); ax.set_ylabel("mémoire de dette ρ")
+ax.set_xlabel("sensibilité d'usure α")
+ax.set_ylabel("mémoire de dette ρ")
 ax.set_title("Garde d'emballement : pente mesurée de la carte de dette "
              f"(accord {rm.agreement:.1%})")
 fig.colorbar(im, label="pente empirique (>1 : perturbations amplifiées)")
 ax.legend(fontsize=8, loc="upper right")
-fig.tight_layout(); fig.savefig(OUT / "carte_regime.png", dpi=150)
+fig.tight_layout()
+fig.savefig(OUT / "carte_regime.png", dpi=150)
 plt.close(fig)
 
 # 3. Synthese + copies ------------------------------------------------------------

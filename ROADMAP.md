@@ -25,7 +25,7 @@ Rendre le modèle testable sur données réelles, sans circularité.
 - Normalisations du §9.3 : L par charge critique, R = temps de régulation / temps cible, B = min(1, délai critique / délai observé), D(0) = irritants pondérés par ancienneté.
 - Rapport automatique : M(t) ± intervalle de confiance, D(t) en indicateur avancé, zones ordinales avec hystérésis.
 
-## Phase 3 — Confrontation aux données (§9.7) — harnais en place ✅ sur scénarios synthétiques (`baselines.py`, `reports/falsification.md`) ; reste : données réelles externes
+## Phase 3 — Confrontation aux données (§9.7) — harnais durci ✅ (F3a/F3b séparés, avance minimale pré-enregistrée) + benchmark aveugle ✅ (`benchmark.py` : générateur étranger au modèle, 9 détecteurs dont 3 ablations, FPR contrôlé, critère apparié) ; reste : données réelles externes et pré-enregistrement public (OSF/Zenodo)
 
 - Rétro-prédiction sur cas connus de bascule ou de stabilisation (projets, équipes, incidents publics documentés) : un système dont B se dégrade durablement doit voir D monter et M baisser **plus tôt** qu'un système à boucles stables.
 - Comparaison à des baselines naïves (moyenne mobile de L, seuil sur L seul) : le MCS apporte-t-il un signal avancé que la charge seule ne donne pas ?

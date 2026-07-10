@@ -90,7 +90,8 @@ def simulate_network(net: NetworkConfig, n_steps: int = 52) -> list[SimResult]:
             L_input = L_own + coupled_load
             R_brut = _at(cfg.R, t)
             B_brut = _at(cfg.B, t)
-            R = recovery_state[i] if recovery_state[i] is not None else R_brut
+            rec_i = recovery_state[i]
+            R = rec_i if rec_i is not None else R_brut
 
             if cfg.control is not None:
                 L_eff = ext.effective_load(L_input, U[i], cfg.control)

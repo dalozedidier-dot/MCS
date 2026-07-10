@@ -19,7 +19,7 @@
     </nav>
     <div class="shell hero-grid" id="top">
       <div>
-        <p class="eyebrow">Modèle de Cohérence Systémique · v0.3.0</p>
+        <p class="eyebrow">Modèle de Cohérence Systémique · <span data-metric="version">…</span></p>
         <h1>Mesurer une marge.<br><span>Tester une dynamique.</span></h1>
         <p class="lead">Un cadre computationnel exploratoire pour étudier comment charge, récupération, boucles de retour et dette accumulée peuvent déplacer un système vers la tension, la pré-rupture ou la réorganisation.</p>
         <div class="hero-actions">
@@ -42,11 +42,12 @@
 
   <main>
     <section class="stats shell" id="resultats" aria-label="Indicateurs du projet">
-      <article><strong data-count="76">0</strong><span>tests automatisés</span></article>
-      <article><strong>3 / 3</strong><span>tests synthétiques de falsification</span></article>
-      <article><strong>3.10–3.12</strong><span>versions Python testées en CI</span></article>
+      <article><strong data-metric="n_tests" data-count="0">0</strong><span>tests automatisés</span></article>
+      <article><strong data-metric="falsification">— / —</strong><span>tests synthétiques de falsification</span></article>
+      <article><strong data-metric="python_ci">—</strong><span>versions Python testées en CI</span></article>
       <article><strong>SHA‑256</strong><span>intégrité du protocole gelé</span></article>
     </section>
+    <p class="shell" style="font-size:.75rem;color:#65726d;margin-top:-8px">Chiffres injectés depuis <a href="data/results.json">data/results.json</a>, généré par la CI (<span data-metric="provenance">génération locale</span>) — aucun nombre saisi à la main.</p>
 
     <section class="section shell">
       <div class="section-heading">

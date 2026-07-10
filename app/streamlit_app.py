@@ -15,8 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import pandas as pd
 import streamlit as st
 
-from mcs import (ControlParams, RecoveryParams, SimConfig, ThetaParams,
-                 core, simulate)
+from mcs import ControlParams, RecoveryParams, SimConfig, ThetaParams, core, simulate
 from mcs.scenarios import ALL_SCENARIOS
 
 st.set_page_config(page_title="MCS - Indice de Marge Systemique",
@@ -78,7 +77,7 @@ res = simulate(cfg, n_steps)
 
 df = pd.DataFrame(res.to_dict()).set_index("t")
 df["dM"] = [core.margin_uncertainty(m, a, c, rel_err_R=err, rel_err_B=err)
-            for m, a, c in zip(df["M"], df["A"], df["C"])]
+            for m, a, c in zip(df["M"], df["A"], df["C"], strict=False)]
 df["M_lo"], df["M_hi"] = df["M"] - df["dM"], df["M"] + df["dM"]
 
 c1, c2 = st.columns(2)
@@ -111,7 +110,7 @@ name = st.selectbox("Charger un scenario", ["-"] + list(ALL_SCENARIOS))
 if name != "-":
     out = ALL_SCENARIOS[name]()
     if isinstance(out, list):     # reseau couple
-        for i, r in enumerate(out):
+        for _i, r in enumerate(out):
             st.line_chart(pd.DataFrame({"M": r.M, "D": r.D}),
                           height=200)
     else:

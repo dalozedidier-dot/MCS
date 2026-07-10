@@ -11,7 +11,6 @@ from mcs.experiments import (
 )
 from mcs.extensions import ThetaParams
 
-
 MEMORY_CFG = SimConfig(
     R=0.7, B=0.65, rho=0.9, D_crit=0.6, mu0=0.15,
     theta_params=ThetaParams(theta0=1.0, theta_min=0.4,
@@ -35,7 +34,7 @@ def test_irreversibility_loop_is_open():
     assert loop.D_final > 0.0
     assert loop.theta_final < 1.0        # trace dans la capacite nominale
     # la montee domine la descente point a point (au sens large)
-    assert all(u >= d - 1e-9 for u, d in zip(loop.M_up, loop.M_down))
+    assert all(u >= d - 1e-9 for u, d in zip(loop.M_up, loop.M_down, strict=True))
 
 
 def test_memoryless_control_closes_the_loop():

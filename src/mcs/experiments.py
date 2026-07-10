@@ -30,7 +30,6 @@ from dataclasses import dataclass, replace
 from .extensions import ThetaParams, alpha_runaway
 from .simulator import SimConfig, simulate
 
-
 # ---------------------------------------------------------------------------
 # 1. Irreversibilite : boucle d'hysteresis M(L)
 # ---------------------------------------------------------------------------
@@ -153,7 +152,7 @@ def regime_map(R: float = 0.9, B: float = 0.9, theta0: float = 1.0,
     hits = total = 0
     for i, rho in enumerate(rhos):
         grow_row, slope_row = [], []
-        for j, a in enumerate(alphas):
+        for a in alphas:
             sl = perturbation_slope(rho, a, R, B, theta0, theta_min,
                                     D_crit, L)
             slope_row.append(sl)

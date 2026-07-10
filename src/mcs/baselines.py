@@ -86,15 +86,16 @@ class ComparisonRecord:
     mcs: int | None
     naive_threshold: int | None
     naive_moving_avg: int | None
-    lead_vs_threshold: int | None  # >0 : le MCS alerte plus tot
-    lead_vs_moving_avg: int | None
+    lead_vs_threshold: float | None  # >0 : le MCS alerte plus tot (inf si baseline muette)
+    lead_vs_moving_avg: float | None
+    lead_vs_event: int | None      # avance de l'alerte sur l'evenement
     mcs_early_and_valid: bool      # alerte MCS avant l'evenement
 
     def as_dict(self) -> dict:
         return self.__dict__.copy()
 
 
-def _lead(mcs: int | None, base: int | None) -> int | None:
+def _lead(mcs: int | None, base: int | None) -> float | None:
     if mcs is None:
         return None
     if base is None:
@@ -121,6 +122,8 @@ def compare_detectors(cfg: SimConfig, n_steps: int, scenario: str,
         naive_threshold=b1, naive_moving_avg=b2,
         lead_vs_threshold=_lead(m, b1),
         lead_vs_moving_avg=_lead(m, b2),
+        lead_vs_event=(ev - m) if (m is not None and ev is not None)
+                      else None,
         mcs_early_and_valid=(m is not None
                              and (ev is None or m < ev)),
     )
@@ -152,11 +155,23 @@ def falsification_run(records: list[ComparisonRecord] | None = None
        revient en zone viable : le MCS ne doit PAS confirmer d'alerte
        durable (pas de faux positif structurel).
 
-    F3 (avance de signal) - quand une rupture survient, l'alerte MCS
-       doit preceder ou egaler l'alerte de charge naive.
+    F3a (avance sur BASELINE) - quand une rupture survient, l'alerte
+        MCS precede ou egale l'alerte de charge naive :
+        t_MCS <= t_baseline.
+
+    F3b (avance sur EVENEMENT) - l'alerte MCS precede la rupture
+        elle-meme d'au moins MIN_LEAD pas (avance minimale
+        PRE-ENREGISTREE, fixee a la profondeur d'hysteresis k = 3
+        avant execution). Une alerte simultanee a la rupture n'est
+        pas un signal avance : F3a et F3b sont deux hypotheses
+        distinctes, evaluees separement. Limite connue et documentee :
+        sous degradation brutale (rampe raide), l'avance sur
+        l'evenement s'effondre vers zero - le MCS ne devance que ce
+        que la dynamique laisse a devancer.
 
     Chaque FAIL est documente dans details, pas ecarte.
     """
+    MIN_LEAD = 3               # pre-enregistre : >= profondeur d'hysteresis
     out: list[FalsificationRecord] = []
 
     # F1 - degradation silencieuse : L constante et sous-critique
@@ -188,19 +203,29 @@ def falsification_run(records: list[ComparisonRecord] | None = None
               "naive_alerts": naive_fires,
               "M_final": res2.M[-1], "D_final": res2.D[-1]}))
 
-    # F3 - rupture reelle : l'alerte MCS precede la charge naive
+    # F3 - rupture reelle sous degradation graduelle
     def montee(t):
-        return 0.15 + 0.02 * t
+        return 0.15 + 0.005 * t
     cfg3 = SimConfig(L=montee, R=0.7, B=0.65, rho=0.9, D_crit=0.6)
-    rec3 = compare_detectors(cfg3, 80, "montee_vers_rupture",
+    rec3 = compare_detectors(cfg3, 240, "montee_vers_rupture",
                              L_threshold=1.0)
-    ok3 = (rec3.event is not None and rec3.mcs is not None
-           and rec3.lead_vs_threshold is not None
-           and rec3.lead_vs_threshold >= 0)
+    ok3a = (rec3.event is not None and rec3.mcs is not None
+            and rec3.lead_vs_threshold is not None
+            and rec3.lead_vs_threshold >= 0)
     out.append(FalsificationRecord(
-        "F3_avance_de_signal",
-        "en cas de rupture, l'alerte MCS precede l'alerte de charge",
-        ok3, rec3.as_dict()))
+        "F3a_avance_sur_baseline",
+        "en cas de rupture, l'alerte MCS precede l'alerte de charge "
+        "(t_MCS <= t_baseline)",
+        ok3a, rec3.as_dict()))
+    ok3b = (rec3.lead_vs_event is not None
+            and rec3.lead_vs_event >= MIN_LEAD)
+    details3b = dict(rec3.as_dict(), min_lead=MIN_LEAD)
+    out.append(FalsificationRecord(
+        "F3b_avance_sur_evenement",
+        f"l'alerte MCS precede la rupture d'au moins {MIN_LEAD} pas "
+        "(avance minimale pre-enregistree) - une alerte simultanee a "
+        "la rupture n'est pas un signal avance",
+        ok3b, details3b))
 
     if records:
         for r in records:

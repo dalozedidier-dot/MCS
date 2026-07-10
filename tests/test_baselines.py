@@ -43,9 +43,23 @@ def test_falsification_harness_passes_canonical_scenarios():
     by_name = {r.name: r for r in recs}
     assert by_name["F1_degradation_silencieuse"].passed
     assert by_name["F2_choc_absorbe"].passed
-    assert by_name["F3_avance_de_signal"].passed
+    assert by_name["F3a_avance_sur_baseline"].passed
+    assert by_name["F3b_avance_sur_evenement"].passed
     report = falsification_report(recs)
     assert "PASS" in report and "falsification" in report.lower()
+
+
+def test_f3b_is_strictly_harder_than_f3a():
+    """Une alerte simultanee a la rupture (avance 0) doit satisfaire
+    F3a mais PAS F3b : les deux hypotheses sont bien distinctes.
+    Rampe raide 0.02/pas : cas documente ou l'avance s'effondre."""
+    from mcs import SimConfig
+    cfg = SimConfig(L=lambda t: 0.15 + 0.02 * t, R=0.7, B=0.65,
+                    rho=0.9, D_crit=0.6)
+    rec = compare_detectors(cfg, 80, "rampe_raide", L_threshold=1.0)
+    assert rec.lead_vs_threshold is not None
+    assert rec.lead_vs_threshold > 0          # F3a tiendrait
+    assert rec.lead_vs_event == 0             # F3b echouerait (< 3)
 
 
 def test_falsification_report_documents_failures():

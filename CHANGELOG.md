@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.5.0 — 2026-07-10
+
+Exécution des priorités 1–6 de l'audit « démonstration maximale ».
+
+### Falsification durcie (priorité 1)
+- F3 scindé en deux hypothèses distinctes : **F3a** (avance sur baseline, t_MCS ≤ t_baseline) et **F3b** (avance sur l'événement lui-même, ≥ 3 pas, avance minimale pré-enregistrée à la profondeur d'hystérésis). Une alerte simultanée à la rupture ne peut plus passer pour un signal avancé. Limite documentée et testée : sous rampe brutale, F3a tient et F3b échoue — les deux hypothèses sont bien séparées.
+- `ComparisonRecord.lead_vs_event` ajouté.
+
+### Qualité logicielle (priorité 2, niveau A)
+- `ruff check .` vert sur tout le dépôt (app Streamlit comprise) ; `mypy src/mcs` sans erreur ; les deux ajoutés à la CI.
+- 10 tests génératifs Hypothesis / métamorphiques (priorité 3) : bornes et monotonies du noyau, invariance d'échelle de M, D* point fixe atteint dynamiquement, ordinalité de la classification, discipline de l'hystérésis, optimalité de U*, invariants le long de trajectoires complètes, déterminisme.
+
+### Benchmark aveugle (priorités 4 et 6, expérience phare)
+- `mcs.benchmark` : 5 familles génératrices **étrangères au MCS** (étiquettes issues d'une capacité latente cachée ; non-circularité vérifiée par test statique), paramètres des détecteurs pré-enregistrés dans le code, seuils calibrés au même taux de fausses alertes cible (10 %) par la même règle pour tous, graines de calibration/validation disjointes (150/300).
+- 9 détecteurs : 5 baselines de charge (seuil, moyenne mobile, EWMA, pente, CUSUM), 3 ablations (sans dette, dette sans débordement, fuite additive), MCS complet.
+- Critère principal **apparié** : gain médian de délai d'alerte contre la baseline la plus défavorable, détection manquée = avance nulle (un détecteur ne peut pas gagner en ne tirant que sur les cas faciles ; test anti-cherry-picking inclus). Résultat courant : **+11 pas** vs seuil de charge, sensibilité 1.00, FPR observé 0.09 ; ventilation par famille publiée.
+- Constat d'ablation publié tel quel : sous calibration à FPR contrôlé, les variantes sans débordement / à fuite additive devancent le modèle complet (15 vs 11 pas de délai médian) — le terme de débordement réagit aux faux chocs et relève le seuil calibré. Information, pas accident.
+- `scripts/run_benchmark.py` : benchmark.json, benchmark.md, benchmark.png (CI).
+
+### GitHub Pages traçable (priorité 5, niveau H)
+- `scripts/build_site_data.py` compile `docs/data/results.json` depuis les artefacts réels : comptage pytest effectif, harnais de falsification exécuté, résumé du benchmark, version, date UTC, commit SHA (CI).
+- La page n'affiche plus aucun nombre saisi à la main : métriques injectées au chargement, provenance affichée (commit + date), lien vers le JSON.
+- `pages.yml` exécute benchmark + compilation avant déploiement ; déclenché aussi par `src/**`.
+
+
 ## 0.4.0 — 2026-07-10
 
 Axe démonstration.

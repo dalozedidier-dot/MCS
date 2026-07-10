@@ -1,0 +1,106 @@
+{
+  "version": "0.5.0",
+  "generated_at": "2026-07-10T10:04:57+00:00",
+  "commit": "local",
+  "n_tests": 107,
+  "falsification": [
+    {
+      "name": "F1_degradation_silencieuse",
+      "passed": true,
+      "prediction": "D monte et le MCS alerte alors que la charge seule reste muette"
+    },
+    {
+      "name": "F2_choc_absorbe",
+      "passed": true,
+      "prediction": "le detecteur de charge s'affole sur un choc bref ; le MCS revient en zone viable (l'hysteresis filtre le transitoire)"
+    },
+    {
+      "name": "F3a_avance_sur_baseline",
+      "passed": true,
+      "prediction": "en cas de rupture, l'alerte MCS precede l'alerte de charge (t_MCS <= t_baseline)"
+    },
+    {
+      "name": "F3b_avance_sur_evenement",
+      "passed": true,
+      "prediction": "l'alerte MCS precede la rupture d'au moins 3 pas (avance minimale pre-enregistree) - une alerte simultanee a la rupture n'est pas un signal avance"
+    }
+  ],
+  "falsification_pass": 4,
+  "falsification_total": 4,
+  "benchmark": {
+    "headline": {
+      "critere": "gain median APPARIE de delai d'alerte du MCS complet sur la baseline la plus defavorable (detection manquee = avance nulle), a taux de fausses alertes calibre identique (10%)",
+      "gains_apparies_par_baseline": {
+        "seuil_L": 11.0,
+        "moyenne_mobile": 11.0,
+        "ewma": 11.0,
+        "pente_L": 11.0,
+        "cusum": 11.0
+      },
+      "baseline_la_plus_defavorable": "seuil_L",
+      "gain_median": 11.0,
+      "delai_median_mcs": 11.0,
+      "sensibilite_mcs": 1.0,
+      "fpr_mcs_observe": 0.09022556390977443
+    },
+    "n_validation": 300,
+    "target_fpr": 0.1,
+    "detectors": [
+      {
+        "name": "seuil_L",
+        "sensitivity": 0.3652694610778443,
+        "false_alarm_rate": 0.13533834586466165,
+        "median_lead": 2.0
+      },
+      {
+        "name": "moyenne_mobile",
+        "sensitivity": 0.41916167664670656,
+        "false_alarm_rate": 0.06015037593984962,
+        "median_lead": 3.0
+      },
+      {
+        "name": "ewma",
+        "sensitivity": 0.4550898203592814,
+        "false_alarm_rate": 0.09022556390977443,
+        "median_lead": 3.0
+      },
+      {
+        "name": "pente_L",
+        "sensitivity": 0.2634730538922156,
+        "false_alarm_rate": 0.14285714285714285,
+        "median_lead": 1.0
+      },
+      {
+        "name": "cusum",
+        "sensitivity": 0.1497005988023952,
+        "false_alarm_rate": 0.14285714285714285,
+        "median_lead": 14.0
+      },
+      {
+        "name": "mcs_sans_dette",
+        "sensitivity": 0.8622754491017964,
+        "false_alarm_rate": 0.12030075187969924,
+        "median_lead": 5.0
+      },
+      {
+        "name": "mcs_sans_debordement",
+        "sensitivity": 1.0,
+        "false_alarm_rate": 0.10526315789473684,
+        "median_lead": 15.0
+      },
+      {
+        "name": "mcs_fuite_additive",
+        "sensitivity": 1.0,
+        "false_alarm_rate": 0.09022556390977443,
+        "median_lead": 15.0
+      },
+      {
+        "name": "mcs_complet",
+        "sensitivity": 1.0,
+        "false_alarm_rate": 0.09022556390977443,
+        "median_lead": 11.0
+      }
+    ]
+  },
+  "python_ci": "3.10-3.12"
+}
