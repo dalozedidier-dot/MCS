@@ -17,12 +17,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - run: python -m pip install --upgrade pip
       - run: pip install -e ".[dev,viz,protocol]"
       - run: ruff check .
       - run: mypy src/mcs
-      - run: ruff check src tests scripts
-      - run: pytest --cov=mcs --cov-report=term-missing
+      - run: pytest --cov=mcs --cov-report=term-missing --cov-report=json:reports/coverage.json --junitxml=reports/junit.xml
+      - run: pytest tests/test_js_parity.py -q
       - run: python scripts/run_robustness.py
       - run: python scripts/run_protocol_demo.py
       - run: python scripts/run_demo_dossier.py

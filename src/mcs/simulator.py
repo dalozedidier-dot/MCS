@@ -44,6 +44,7 @@ class SimConfig:
       R : recuperation brute (devient R_brut si recovery est actif)
       B : boucles de retour brutes
     """
+
     L: Series = 0.4
     R: Series = 0.8
     B: Series = 0.8
@@ -51,8 +52,8 @@ class SimConfig:
     # Noyau
     theta0: float = 1.0
     D0: float = 0.0
-    rho: float = 0.8       # memoire de dette
-    s: float = 0.0         # substituabilite R/B (0 = produit pur)
+    rho: float = 0.8  # memoire de dette
+    s: float = 0.0  # substituabilite R/B (0 = produit pur)
 
     # Extension 6.1 - remboursement actif (mu0 = 0 => desactive)
     mu0: float = 0.0
@@ -91,6 +92,7 @@ class SimConfig:
 @dataclass
 class SimResult:
     """Trajectoires simulees (listes de longueur n_steps)."""
+
     t: list[int] = field(default_factory=list)
     L: list[float] = field(default_factory=list)
     L_eff: list[float] = field(default_factory=list)
@@ -107,9 +109,24 @@ class SimResult:
     zone: list[core.Zone] = field(default_factory=list)
 
     def to_dict(self) -> dict:
-        d = {k: getattr(self, k) for k in
-             ("t", "L", "L_eff", "D", "R_eff", "B_eff", "theta",
-              "A", "C", "M", "M_bounded", "U", "mu")}
+        d = {
+            k: getattr(self, k)
+            for k in (
+                "t",
+                "L",
+                "L_eff",
+                "D",
+                "R_eff",
+                "B_eff",
+                "theta",
+                "A",
+                "C",
+                "M",
+                "M_bounded",
+                "U",
+                "mu",
+            )
+        }
         d["zone"] = [z.value for z in self.zone]
         return d
 
@@ -119,13 +136,12 @@ def simulate(cfg: SimConfig, n_steps: int = 52) -> SimResult:
     if n_steps < 1:
         raise ValueError("n_steps doit etre superieur ou egal a 1")
     res = SimResult()
-    classifier = core.HysteresisClassifier(k=cfg.hysteresis_k,
-                                           thresholds=cfg.thresholds)
+    classifier = core.HysteresisClassifier(k=cfg.hysteresis_k, thresholds=cfg.thresholds)
 
     D = cfg.D0
     theta = cfg.theta_params.theta0 if cfg.theta_params else cfg.theta0
-    R_eff_state: float | None = None   # etat de l'extension 6.5
-    U = 0.0                            # commande courante (reagit a M(t-1))
+    R_eff_state: float | None = None  # etat de l'extension 6.5
+    U = 0.0  # commande courante (reagit a M(t-1))
 
     for t in range(n_steps):
         # 1. Observer les entrees exogenes
@@ -172,8 +188,7 @@ def simulate(cfg: SimConfig, n_steps: int = 52) -> SimResult:
         if cfg.mu0 > 0.0:
             mu = ext.repayment_rate(cfg.mu0, R, D_n, cfg.gamma)
             extra = (cfg.control.delta * U) if cfg.control else 0.0
-            D = ext.debt_update_with_repayment(D, L_eff, R, B_eff, C,
-                                               cfg.rho, mu, extra)
+            D = ext.debt_update_with_repayment(D, L_eff, R, B_eff, C, cfg.rho, mu, extra)
         else:
             mu = 0.0
             D = core.debt_update(D, L_eff, R, B_eff, C, cfg.rho)
@@ -181,13 +196,11 @@ def simulate(cfg: SimConfig, n_steps: int = 52) -> SimResult:
 
         if cfg.recovery is not None:
             D_n_new = ext.normalized_debt(D, cfg.D_crit)
-            R_eff_state = ext.effective_recovery(_at(cfg.R, t + 1),
-                                                 D_n_new, B_eff,
-                                                 cfg.recovery)
+            R_eff_state = ext.effective_recovery(_at(cfg.R, t + 1), D_n_new, B_eff, cfg.recovery)
         if cfg.theta_params is not None:
-            theta = ext.theta_update(theta, cfg.theta_params,
-                                     ext.normalized_debt(D, cfg.D_crit),
-                                     B_eff)
+            theta = ext.theta_update(
+                theta, cfg.theta_params, ext.normalized_debt(D, cfg.D_crit), B_eff
+            )
         U = U_next
 
     return res

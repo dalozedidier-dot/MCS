@@ -110,7 +110,7 @@ L'anti-circularité du §9.2 est appliquée **par le code** : `compute_series` r
 
 ```bash
 cd mcs-model
-git init && git add . && git commit -m "MCS v0.3.0 - moteurs unifies, validations, tests et GitHub Pages"
+git init && git add . && git commit -m "MCS v0.6.0 - benchmark renforce, limites negatives et GitHub Pages responsive"
 gh repo create mcs-model --public --source=. --push
 # ou : créer le repo sur github.com puis
 # git remote add origin https://github.com/<votre-compte>/mcs-model.git

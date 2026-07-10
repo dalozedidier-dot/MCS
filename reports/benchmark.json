@@ -5,11 +5,11 @@
   "detectors": [
     {
       "name": "seuil_L",
-      "threshold": 0.9903257199745172,
-      "sensitivity": 0.3652694610778443,
-      "false_alarm_rate": 0.13533834586466165,
-      "precision": 0.7721518987341772,
-      "recall": 0.3652694610778443,
+      "threshold": 0.9839022675847768,
+      "sensitivity": 0.38323353293413176,
+      "false_alarm_rate": 0.08270676691729323,
+      "precision": 0.8533333333333334,
+      "recall": 0.38323353293413176,
       "median_lead": 2.0,
       "by_family": {
         "recovery": {
@@ -20,7 +20,7 @@
           "n_no_event": 61
         },
         "regime_switch": {
-          "sensitivity": 0.8305084745762712,
+          "sensitivity": 0.8813559322033898,
           "false_alarm_rate": null,
           "median_lead": 2.0,
           "n_event": 59,
@@ -42,40 +42,50 @@
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.2,
+          "false_alarm_rate": 0.09230769230769231,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 25,
+        "too_early_count": 0,
+        "late_or_missed_count": 142,
+        "useful_rate": 0.1497005988023952,
+        "too_early_rate": 0.0,
+        "late_or_missed_rate": 0.8502994011976048
       }
     },
     {
       "name": "moyenne_mobile",
-      "threshold": 0.8100556673799042,
-      "sensitivity": 0.41916167664670656,
-      "false_alarm_rate": 0.06015037593984962,
-      "precision": 0.8974358974358975,
-      "recall": 0.41916167664670656,
-      "median_lead": 3.0,
+      "threshold": 0.7127268038742194,
+      "sensitivity": 0.6107784431137725,
+      "false_alarm_rate": 0.13533834586466165,
+      "precision": 0.85,
+      "recall": 0.6107784431137725,
+      "median_lead": 4.0,
       "by_family": {
         "recovery": {
           "sensitivity": null,
-          "false_alarm_rate": 0.0,
+          "false_alarm_rate": 0.18032786885245902,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 61
         },
         "regime_switch": {
-          "sensitivity": 0.6779661016949152,
+          "sensitivity": 0.8983050847457628,
           "false_alarm_rate": null,
           "median_lead": 2.0,
           "n_event": 59,
           "n_no_event": 0
         },
         "ramp_to_break": {
-          "sensitivity": 0.5882352941176471,
-          "false_alarm_rate": 0.7142857142857143,
-          "median_lead": 8.5,
+          "sensitivity": 0.9607843137254902,
+          "false_alarm_rate": 1.0,
+          "median_lead": 13.0,
           "n_event": 51,
           "n_no_event": 7
         },
@@ -88,40 +98,50 @@
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.046153846153846156,
+          "false_alarm_rate": 0.0,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 58,
+        "too_early_count": 5,
+        "late_or_missed_count": 104,
+        "useful_rate": 0.3473053892215569,
+        "too_early_rate": 0.029940119760479042,
+        "late_or_missed_rate": 0.6227544910179641
       }
     },
     {
       "name": "ewma",
-      "threshold": 0.7876566088034571,
-      "sensitivity": 0.4550898203592814,
-      "false_alarm_rate": 0.09022556390977443,
-      "precision": 0.8636363636363636,
-      "recall": 0.4550898203592814,
-      "median_lead": 3.0,
+      "threshold": 0.7130983474233626,
+      "sensitivity": 0.6407185628742516,
+      "false_alarm_rate": 0.09774436090225563,
+      "precision": 0.8916666666666667,
+      "recall": 0.6407185628742516,
+      "median_lead": 4.0,
       "by_family": {
         "recovery": {
           "sensitivity": null,
-          "false_alarm_rate": 0.0,
+          "false_alarm_rate": 0.09836065573770492,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 61
         },
         "regime_switch": {
-          "sensitivity": 0.711864406779661,
+          "sensitivity": 0.9661016949152542,
           "false_alarm_rate": null,
-          "median_lead": 1.5,
+          "median_lead": 2.0,
           "n_event": 59,
           "n_no_event": 0
         },
         "ramp_to_break": {
-          "sensitivity": 0.6666666666666666,
+          "sensitivity": 0.9803921568627451,
           "false_alarm_rate": 1.0,
-          "median_lead": 10.0,
+          "median_lead": 13.5,
           "n_event": 51,
           "n_no_event": 7
         },
@@ -134,21 +154,31 @@
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.07692307692307693,
+          "false_alarm_rate": 0.0,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 61,
+        "too_early_count": 5,
+        "late_or_missed_count": 101,
+        "useful_rate": 0.3652694610778443,
+        "too_early_rate": 0.029940119760479042,
+        "late_or_missed_rate": 0.6047904191616766
       }
     },
     {
       "name": "pente_L",
-      "threshold": 0.10553242998656452,
-      "sensitivity": 0.2634730538922156,
-      "false_alarm_rate": 0.14285714285714285,
-      "precision": 0.6984126984126984,
-      "recall": 0.2634730538922156,
-      "median_lead": 1.0,
+      "threshold": 0.08582292233548772,
+      "sensitivity": 0.33532934131736525,
+      "false_alarm_rate": 0.07518796992481203,
+      "precision": 0.8484848484848485,
+      "recall": 0.33532934131736525,
+      "median_lead": 2.0,
       "by_family": {
         "recovery": {
           "sensitivity": null,
@@ -158,9 +188,9 @@
           "n_no_event": 61
         },
         "regime_switch": {
-          "sensitivity": 0.7457627118644068,
+          "sensitivity": 0.9491525423728814,
           "false_alarm_rate": null,
-          "median_lead": 1.0,
+          "median_lead": 2.0,
           "n_event": 59,
           "n_no_event": 0
         },
@@ -180,11 +210,21 @@
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.2923076923076923,
+          "false_alarm_rate": 0.15384615384615385,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 23,
+        "too_early_count": 1,
+        "late_or_missed_count": 143,
+        "useful_rate": 0.1377245508982036,
+        "too_early_rate": 0.005988023952095809,
+        "late_or_missed_rate": 0.8562874251497006
       }
     },
     {
@@ -231,14 +271,24 @@
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 25,
+        "too_early_count": 0,
+        "late_or_missed_count": 142,
+        "useful_rate": 0.1497005988023952,
+        "too_early_rate": 0.0,
+        "late_or_missed_rate": 0.8502994011976048
       }
     },
     {
       "name": "mcs_sans_dette",
       "threshold": 0.36380815158704194,
       "sensitivity": 0.8622754491017964,
-      "false_alarm_rate": 0.12030075187969924,
-      "precision": 0.9,
+      "false_alarm_rate": 0.08270676691729323,
+      "precision": 0.9290322580645162,
       "recall": 0.8622754491017964,
       "median_lead": 5.0,
       "by_family": {
@@ -272,19 +322,29 @@
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.13846153846153847,
+          "false_alarm_rate": 0.06153846153846154,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 111,
+        "too_early_count": 5,
+        "late_or_missed_count": 51,
+        "useful_rate": 0.6646706586826348,
+        "too_early_rate": 0.029940119760479042,
+        "late_or_missed_rate": 0.30538922155688625
       }
     },
     {
       "name": "mcs_sans_debordement",
       "threshold": 0.45915529848762904,
       "sensitivity": 1.0,
-      "false_alarm_rate": 0.10526315789473684,
-      "precision": 0.9226519337016574,
+      "false_alarm_rate": 0.09022556390977443,
+      "precision": 0.9329608938547486,
       "recall": 1.0,
       "median_lead": 15.0,
       "by_family": {
@@ -318,25 +378,35 @@
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.07692307692307693,
+          "false_alarm_rate": 0.046153846153846156,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 143,
+        "too_early_count": 22,
+        "late_or_missed_count": 2,
+        "useful_rate": 0.8562874251497006,
+        "too_early_rate": 0.1317365269461078,
+        "late_or_missed_rate": 0.011976047904191617
       }
     },
     {
       "name": "mcs_fuite_additive",
-      "threshold": 1.7277251378763094,
+      "threshold": 1.671206135961386,
       "sensitivity": 1.0,
-      "false_alarm_rate": 0.09022556390977443,
-      "precision": 0.9329608938547486,
+      "false_alarm_rate": 0.10526315789473684,
+      "precision": 0.9226519337016574,
       "recall": 1.0,
-      "median_lead": 15.0,
+      "median_lead": 16.0,
       "by_family": {
         "recovery": {
           "sensitivity": null,
-          "false_alarm_rate": 0.06557377049180328,
+          "false_alarm_rate": 0.11475409836065574,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 61
@@ -351,32 +421,42 @@
         "ramp_to_break": {
           "sensitivity": 1.0,
           "false_alarm_rate": 1.0,
-          "median_lead": 27.0,
+          "median_lead": 28.0,
           "n_event": 51,
           "n_no_event": 7
         },
         "silent_erosion": {
           "sensitivity": 1.0,
           "false_alarm_rate": null,
-          "median_lead": 16.0,
+          "median_lead": 18.0,
           "n_event": 57,
           "n_no_event": 0
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.015384615384615385,
+          "false_alarm_rate": 0.0,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 134,
+        "too_early_count": 23,
+        "late_or_missed_count": 10,
+        "useful_rate": 0.8023952095808383,
+        "too_early_rate": 0.1377245508982036,
+        "late_or_missed_rate": 0.059880239520958084
       }
     },
     {
       "name": "mcs_complet",
-      "threshold": 0.809159704754999,
+      "threshold": 0.7237380816042465,
       "sensitivity": 1.0,
-      "false_alarm_rate": 0.09022556390977443,
-      "precision": 0.9329608938547486,
+      "false_alarm_rate": 0.05263157894736842,
+      "precision": 0.9597701149425287,
       "recall": 1.0,
       "median_lead": 11.0,
       "by_family": {
@@ -390,47 +470,73 @@
         "regime_switch": {
           "sensitivity": 1.0,
           "false_alarm_rate": null,
-          "median_lead": 3.0,
+          "median_lead": 4.0,
           "n_event": 59,
           "n_no_event": 0
         },
         "ramp_to_break": {
           "sensitivity": 1.0,
           "false_alarm_rate": 1.0,
-          "median_lead": 22.0,
+          "median_lead": 23.0,
           "n_event": 51,
           "n_no_event": 7
         },
         "silent_erosion": {
           "sensitivity": 1.0,
           "false_alarm_rate": null,
-          "median_lead": 12.0,
+          "median_lead": 13.0,
           "n_event": 57,
           "n_no_event": 0
         },
         "false_shock": {
           "sensitivity": null,
-          "false_alarm_rate": 0.07692307692307693,
+          "false_alarm_rate": 0.0,
           "median_lead": null,
           "n_event": 0,
           "n_no_event": 65
         }
+      },
+      "lead_quality": {
+        "useful_min": 3,
+        "useful_max": 30,
+        "useful_count": 145,
+        "too_early_count": 15,
+        "late_or_missed_count": 7,
+        "useful_rate": 0.8682634730538922,
+        "too_early_rate": 0.08982035928143713,
+        "late_or_missed_rate": 0.041916167664670656
       }
     }
   ],
   "headline": {
-    "critere": "gain median APPARIE de delai d'alerte du MCS complet sur la baseline la plus defavorable (detection manquee = avance nulle), a taux de fausses alertes calibre identique (10%)",
+    "critere": "gain median APPARIE de delai d'alerte du MCS complet sur la baseline la plus defavorable (detection manquee = avance nulle), avec la meme regle de calibration et un FPR cible commun (10%)",
     "gains_apparies_par_baseline": {
       "seuil_L": 11.0,
-      "moyenne_mobile": 11.0,
-      "ewma": 11.0,
+      "moyenne_mobile": 8.0,
+      "ewma": 8.0,
       "pente_L": 11.0,
       "cusum": 11.0
     },
-    "baseline_la_plus_defavorable": "seuil_L",
-    "gain_median": 11.0,
+    "baseline_la_plus_defavorable": "moyenne_mobile",
+    "gain_median": 8.0,
+    "distribution_gain": {
+      "n": 167,
+      "mean": 8.7125748502994,
+      "median": 8.0,
+      "q1": 2.0,
+      "q3": 13.0,
+      "min": 1,
+      "max": 34,
+      "win_rate": 1.0,
+      "tie_rate": 0.0,
+      "loss_rate": 0.0,
+      "median_ci95": [
+        6.0,
+        10.0
+      ]
+    },
     "delai_median_mcs": 11.0,
     "sensibilite_mcs": 1.0,
-    "fpr_mcs_observe": 0.09022556390977443
+    "fpr_mcs_observe": 0.05263157894736842
   }
 }

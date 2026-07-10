@@ -28,6 +28,7 @@ def clip(x: float, lo: float, hi: float) -> float:
 # Noyau : A, C, M, M~
 # ---------------------------------------------------------------------------
 
+
 def total_load(L: float, D: float) -> float:
     """A(t) = L(t) + D(t), charge actuelle augmentee de la dette accumulee."""
     if L < 0 or D < 0:
@@ -80,8 +81,7 @@ def bounded_margin_index(A: float, C: float) -> float:
     return (C - A) / (C + A)
 
 
-def margin(L: float, D: float, theta: float, R: float, B: float,
-           s: float = 0.0) -> float:
+def margin(L: float, D: float, theta: float, R: float, B: float, s: float = 0.0) -> float:
     """Forme developpee M(t) = 1 - (L+D) / C(Theta, R, B, s)."""
     return margin_index(total_load(L, D), capacity(theta, R, B, s))
 
@@ -89,6 +89,7 @@ def margin(L: float, D: float, theta: float, R: float, B: float,
 # ---------------------------------------------------------------------------
 # Dynamique de la dette (§ 3.1)
 # ---------------------------------------------------------------------------
+
 
 def leak(L: float, R: float, B: float) -> float:
     """Fuite de sous-recuperation : (1 - R) * L * (1 - B)."""
@@ -106,8 +107,7 @@ def overflow(L: float, C: float) -> float:
     return max(0.0, L - C)
 
 
-def debt_update(D: float, L: float, R: float, B: float, C: float,
-                rho: float) -> float:
+def debt_update(D: float, L: float, R: float, B: float, C: float, rho: float) -> float:
     """D(t+1) = rho*D(t) + (1-R)L(1-B) + max(0, L - C).  (noyau, sans
     remboursement actif ; voir extensions.debt_update_with_repayment)."""
     if not (0.0 <= rho <= 1.0):
@@ -131,23 +131,24 @@ def debt_rest_level(L: float, R: float, B: float, rho: float) -> float:
 # Zones systemiques (§ 4) - lecture ordinale avec hysteresis
 # ---------------------------------------------------------------------------
 
+
 class Zone(str, Enum):
-    VIABLE = "coherence_viable"          # M > 0.30
-    TENSION = "tension_constructive"     # 0.10 < M <= 0.30
-    SATURATION = "saturation"            # 0.05 < M <= 0.10
-    PRE_RUPTURE = "pre_rupture"          # -0.05 <= M <= 0.05
-    RUPTURE = "rupture"                  # M < -0.05
+    VIABLE = "coherence_viable"  # M > 0.30
+    TENSION = "tension_constructive"  # 0.10 < M <= 0.30
+    SATURATION = "saturation"  # 0.05 < M <= 0.10
+    PRE_RUPTURE = "pre_rupture"  # -0.05 <= M <= 0.05
+    RUPTURE = "rupture"  # M < -0.05
 
 
 #: Seuils pedagogiques par defaut - hypotheses de lecture, PAS des
 #: verites universelles. A calibrer par domaine (§ 4, § 9.2).
-DEFAULT_THRESHOLDS = {"viable": 0.30, "tension": 0.10,
-                      "saturation": 0.05, "pre_rupture": -0.05}
+DEFAULT_THRESHOLDS = {"viable": 0.30, "tension": 0.10, "saturation": 0.05, "pre_rupture": -0.05}
 
 
 def classify(M: float, thresholds: dict | None = None) -> Zone:
     """Classe une valeur de M dans une zone systemique (sans hysteresis)."""
     from .validation import validate_thresholds
+
     th = validate_thresholds(thresholds)
     if M > th["viable"]:
         return Zone.VIABLE
@@ -166,6 +167,7 @@ class HysteresisClassifier:
     confirme qu'apres k pas consecutifs dans la nouvelle zone (§ 4),
     pour eviter les alertes prematurees dues au bruit multiplicatif.
     """
+
     k: int = 3
     thresholds: dict | None = None
     _current: Zone | None = field(default=None, repr=False)
@@ -174,6 +176,7 @@ class HysteresisClassifier:
 
     def __post_init__(self) -> None:
         from .validation import validate_thresholds
+
         if self.k < 1:
             raise ValueError("k doit etre superieur ou egal a 1")
         self.thresholds = validate_thresholds(self.thresholds)
@@ -195,9 +198,15 @@ class HysteresisClassifier:
         return self._current
 
 
-def margin_uncertainty(M: float, A: float, C: float,
-                       rel_err_A: float = 0.0, rel_err_theta: float = 0.0,
-                       rel_err_R: float = 0.0, rel_err_B: float = 0.0) -> float:
+def margin_uncertainty(
+    M: float,
+    A: float,
+    C: float,
+    rel_err_A: float = 0.0,
+    rel_err_theta: float = 0.0,
+    rel_err_R: float = 0.0,
+    rel_err_B: float = 0.0,
+) -> float:
     """Propagation d'incertitude au premier ordre (§ 4) :
 
     dM = -dA/C + (1 - M) * (dTheta/Theta + dR/R + dB/B)
@@ -208,5 +217,4 @@ def margin_uncertainty(M: float, A: float, C: float,
     """
     if C == 0.0:
         return math.inf
-    return (abs(A / C) * rel_err_A
-            + abs(1.0 - M) * (rel_err_theta + rel_err_R + rel_err_B))
+    return abs(A / C) * rel_err_A + abs(1.0 - M) * (rel_err_theta + rel_err_R + rel_err_B)

@@ -26,11 +26,11 @@ class TestCapacity:
 
     def test_bounds_enforced(self):
         with pytest.raises(ValueError):
-            core.capacity(0.0, 0.5, 0.5)     # Theta > 0
+            core.capacity(0.0, 0.5, 0.5)  # Theta > 0
         with pytest.raises(ValueError):
-            core.capacity(1.0, 1.5, 0.5)     # R dans [0,1]
+            core.capacity(1.0, 1.5, 0.5)  # R dans [0,1]
         with pytest.raises(ValueError):
-            core.capacity(1.0, 0.5, -0.1)    # B dans [0,1]
+            core.capacity(1.0, 0.5, -0.1)  # B dans [0,1]
 
 
 class TestMarginIndex:
@@ -52,7 +52,7 @@ class TestMarginIndex:
     def test_developed_form(self):
         # M = 1 - (L+D) / (Theta*R*B)
         M = core.margin(L=0.3, D=0.0, theta=1.0, R=0.85, B=0.9)
-        assert M == pytest.approx(0.608, abs=1e-3)   # semaine 1, § 9.4
+        assert M == pytest.approx(0.608, abs=1e-3)  # semaine 1, § 9.4
 
 
 class TestBoundedIndex:
@@ -72,12 +72,19 @@ class TestBoundedIndex:
 
 class TestZones:
     def test_bands_cover_the_line_and_are_disjoint(self):
-        cases = [(0.5, core.Zone.VIABLE), (0.31, core.Zone.VIABLE),
-                 (0.30, core.Zone.TENSION), (0.2, core.Zone.TENSION),
-                 (0.10, core.Zone.SATURATION), (0.07, core.Zone.SATURATION),
-                 (0.05, core.Zone.PRE_RUPTURE), (0.0, core.Zone.PRE_RUPTURE),
-                 (-0.05, core.Zone.PRE_RUPTURE), (-0.06, core.Zone.RUPTURE),
-                 (-math.inf, core.Zone.RUPTURE)]
+        cases = [
+            (0.5, core.Zone.VIABLE),
+            (0.31, core.Zone.VIABLE),
+            (0.30, core.Zone.TENSION),
+            (0.2, core.Zone.TENSION),
+            (0.10, core.Zone.SATURATION),
+            (0.07, core.Zone.SATURATION),
+            (0.05, core.Zone.PRE_RUPTURE),
+            (0.0, core.Zone.PRE_RUPTURE),
+            (-0.05, core.Zone.PRE_RUPTURE),
+            (-0.06, core.Zone.RUPTURE),
+            (-math.inf, core.Zone.RUPTURE),
+        ]
         for M, zone in cases:
             assert core.classify(M) == zone, M
 

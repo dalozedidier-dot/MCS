@@ -22,8 +22,7 @@ def saturation(D: float, D_seuil: float) -> float:
     return D / (D + D_seuil)
 
 
-def small_gain_bound(rho: float, couplings_row_sum: float,
-                     leak_gain: float) -> bool:
+def small_gain_bound(rho: float, couplings_row_sum: float, leak_gain: float) -> bool:
     """Condition suffisante pedagogique de type petit gain."""
     return rho + leak_gain * couplings_row_sum < 1.0
 
@@ -62,12 +61,11 @@ def simulate_network(net: NetworkConfig, n_steps: int = 52) -> list[SimResult]:
 
     n = len(net.nodes)
     results = [SimResult() for _ in range(n)]
-    classifiers = [core.HysteresisClassifier(k=c.hysteresis_k,
-                                             thresholds=c.thresholds)
-                   for c in net.nodes]
+    classifiers = [
+        core.HysteresisClassifier(k=c.hysteresis_k, thresholds=c.thresholds) for c in net.nodes
+    ]
     D = [c.D0 for c in net.nodes]
-    theta = [c.theta_params.theta0 if c.theta_params else c.theta0
-             for c in net.nodes]
+    theta = [c.theta_params.theta0 if c.theta_params else c.theta0 for c in net.nodes]
     recovery_state: list[float | None] = [None] * n
     U = [0.0] * n
 
@@ -75,8 +73,7 @@ def simulate_network(net: NetworkConfig, n_steps: int = 52) -> list[SimResult]:
         if net.use_saturation:
             debt_signal = [saturation(d, net.D_seuil) for d in D]
         else:
-            debt_signal = [ext.normalized_debt(d, net.nodes[j].D_crit)
-                           for j, d in enumerate(D)]
+            debt_signal = [ext.normalized_debt(d, net.nodes[j].D_crit) for j, d in enumerate(D)]
 
         D_next: list[float] = []
         theta_next = list(theta)
@@ -85,8 +82,7 @@ def simulate_network(net: NetworkConfig, n_steps: int = 52) -> list[SimResult]:
 
         for i, cfg in enumerate(net.nodes):
             L_own = _at(cfg.L, t)
-            coupled_load = sum(net.coupling[i][j] * debt_signal[j]
-                               for j in range(n) if j != i)
+            coupled_load = sum(net.coupling[i][j] * debt_signal[j] for j in range(n) if j != i)
             L_input = L_own + coupled_load
             R_brut = _at(cfg.R, t)
             B_brut = _at(cfg.B, t)
@@ -125,9 +121,7 @@ def simulate_network(net: NetworkConfig, n_steps: int = 52) -> list[SimResult]:
             if cfg.mu0 > 0.0:
                 mu = ext.repayment_rate(cfg.mu0, R, D_n, cfg.gamma)
                 extra = cfg.control.delta * U[i] if cfg.control else 0.0
-                d_new = ext.debt_update_with_repayment(
-                    D[i], L_eff, R, B_eff, C, cfg.rho, mu, extra
-                )
+                d_new = ext.debt_update_with_repayment(D[i], L_eff, R, B_eff, C, cfg.rho, mu, extra)
             else:
                 mu = 0.0
                 d_new = core.debt_update(D[i], L_eff, R, B_eff, C, cfg.rho)
@@ -143,8 +137,7 @@ def simulate_network(net: NetworkConfig, n_steps: int = 52) -> list[SimResult]:
                 )
             if cfg.theta_params is not None:
                 theta_next[i] = ext.theta_update(
-                    theta[i], cfg.theta_params,
-                    ext.normalized_debt(d_new, cfg.D_crit), B_eff
+                    theta[i], cfg.theta_params, ext.normalized_debt(d_new, cfg.D_crit), B_eff
                 )
 
         D = D_next

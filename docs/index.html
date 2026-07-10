@@ -41,13 +41,15 @@
   </header>
 
   <main>
-    <section class="stats shell" id="resultats" aria-label="Indicateurs du projet">
-      <article><strong data-metric="n_tests" data-count="0">0</strong><span>tests automatisés</span></article>
-      <article><strong data-metric="falsification">— / —</strong><span>tests synthétiques de falsification</span></article>
-      <article><strong data-metric="python_ci">—</strong><span>versions Python testées en CI</span></article>
-      <article><strong>SHA‑256</strong><span>intégrité du protocole gelé</span></article>
-    </section>
-    <p class="shell" style="font-size:.75rem;color:#65726d;margin-top:-8px">Chiffres injectés depuis <a href="data/results.json">data/results.json</a>, généré par la CI (<span data-metric="provenance">génération locale</span>) — aucun nombre saisi à la main.</p>
+    <div class="stats-wrap" id="resultats">
+      <section class="stats shell" aria-label="Indicateurs du projet">
+        <article><strong data-metric="n_tests" data-count="0">0</strong><span>tests automatisés</span></article>
+        <article><strong data-metric="falsification">— / —</strong><span>tests synthétiques de falsification</span></article>
+        <article><strong class="stat-compact" data-metric="python_ci">—</strong><span>versions Python testées en CI</span></article>
+        <article><strong class="stat-compact">SHA‑256</strong><span>intégrité du protocole gelé</span></article>
+      </section>
+      <p class="stats-source shell">Chiffres injectés depuis <a href="data/results.json">data/results.json</a>, généré par la CI (<span data-metric="provenance">génération locale</span>) — aucun nombre saisi à la main.</p>
+    </div>
 
     <section class="section shell">
       <div class="section-heading">
@@ -56,11 +58,11 @@
         <p>Les résultats ci-dessous établissent la cohérence interne, la robustesse numérique et la reproductibilité des scénarios définis. Ils ne remplacent pas une validation sur données externes.</p>
       </div>
       <div class="result-grid">
-        <article class="result-card"><div class="result-index">01</div><h3>Cohérence du noyau</h3><p>Les cas limites, niveaux stationnaires, seuils analytiques et propriétés de bornitude sont couverts par des tests automatisés.</p><span class="tag">76/76 PASS</span></article>
+        <article class="result-card"><div class="result-index">01</div><h3>Cohérence du noyau</h3><p>Les cas limites, niveaux stationnaires, seuils analytiques et propriétés de bornitude sont couverts par des tests automatisés.</p><span class="tag" data-metric="tests_label">Tests chargés…</span></article>
         <article class="result-card"><div class="result-index">02</div><h3>Équivalence des moteurs</h3><p>Un réseau à un seul nœud sans couplage reproduit désormais le moteur individuel, extensions comprises.</p><span class="tag">Invariant architectural</span></article>
-        <article class="result-card"><div class="result-index">03</div><h3>Signal avancé synthétique</h3><p>Dans le scénario de dégradation silencieuse, la dette augmente et le MCS alerte alors que la charge seule reste sous son seuil.</p><span class="tag">F1 PASS</span></article>
+        <article class="result-card result-card-highlight"><div class="result-index">03</div><h3>Benchmark aveugle</h3><p>Le MCS complet est comparé à cinq baselines de charge avec une même règle de calibration et un FPR cible commun.</p><span class="tag" data-metric="benchmark_gain">Résultat chargé…</span></article>
         <article class="result-card"><div class="result-index">04</div><h3>Filtrage du transitoire</h3><p>Un choc bref peut déclencher la baseline de charge sans empêcher le système de revenir en zone viable.</p><span class="tag">F2 PASS</span></article>
-        <article class="result-card"><div class="result-index">05</div><h3>Avance sur rupture</h3><p>Dans le scénario canonique de montée vers la rupture, l’alerte MCS précède ou égale l’alerte fondée sur la charge.</p><span class="tag">F3 PASS</span></article>
+        <article class="result-card"><div class="result-index">05</div><h3>Avance dissociée</h3><p>F3a mesure l’avance sur les baselines ; F3b exige une anticipation réelle de l’événement. Une alerte simultanée ne compte plus comme signal avancé.</p><span class="tag">F3a + F3b séparés</span></article>
         <article class="result-card"><div class="result-index">06</div><h3>Anti-circularité</h3><p>Le calcul refuse un protocole non gelé ou modifié après gel. Les proxys et seuils doivent être déclarés avant l’analyse.</p><span class="tag">Vérification intégrée</span></article>
       </div>
     </section>
@@ -69,7 +71,8 @@
       <div class="shell">
         <div class="section-heading compact"><p class="eyebrow">Robustesse numérique</p><h2>Voir les dynamiques, pas seulement les scores</h2></div>
         <div class="gallery">
-          <figure class="featured"><img src="assets/monte_carlo.png" alt="Éventail Monte Carlo des trajectoires de marge systémique" loading="lazy"><figcaption><strong>Monte Carlo</strong><span>Dispersion de M(t) sous bruit multiplicatif sur L, R et B.</span></figcaption></figure>
+          <figure class="featured"><img src="assets/benchmark.png" alt="Comparaison des délais d'alerte du MCS et des baselines" loading="lazy"><figcaption><strong>Benchmark aveugle</strong><span>Délais d’alerte et sensibilités sur le jeu de validation indépendant.</span></figcaption></figure>
+          <figure><img src="assets/monte_carlo.png" alt="Éventail Monte Carlo des trajectoires de marge systémique" loading="lazy"><figcaption><strong>Monte Carlo</strong><span>Dispersion de M(t) sous bruit multiplicatif sur L, R et B.</span></figcaption></figure>
           <figure><img src="assets/hysteresis_k.png" alt="Réduction des fausses alertes selon le paramètre d'hystérésis" loading="lazy"><figcaption><strong>Hystérésis</strong><span>Effet du nombre de confirmations sur les transitions parasites.</span></figcaption></figure>
           <figure><img src="assets/cascade.png" alt="Propagation de cascades en fonction du rayon spectral" loading="lazy"><figcaption><strong>Cascades</strong><span>Relation entre couplage, rayon spectral et propagation des ruptures.</span></figcaption></figure>
           <figure><img src="assets/tornado.png" alt="Diagramme de sensibilité de l'indice MCS" loading="lazy"><figcaption><strong>Sensibilité</strong><span>Contribution des incertitudes de mesure à l’incertitude sur M.</span></figcaption></figure>
@@ -84,8 +87,8 @@
         <article><span>1</span><div><h3>Déclarer</h3><p>Définir les proxys, ancrages, seuils, erreurs relatives et règles d’agrégation avant de regarder les résultats.</p></div></article>
         <article><span>2</span><div><h3>Geler</h3><p>Calculer une empreinte SHA‑256 du protocole. Toute retouche ultérieure est détectée.</p></div></article>
         <article><span>3</span><div><h3>Calculer</h3><p>Normaliser L, R et B, mettre à jour D, calculer C puis M, et appliquer l’hystérésis sans fuite du futur.</p></div></article>
-        <article><span>4</span><div><h3>Comparer</h3><p>Confronter le signal MCS à des baselines simples : seuil de charge et moyenne mobile.</p></div></article>
-        <article><span>5</span><div><h3>Chercher l’échec</h3><p>Documenter les scénarios où les lois de mise à jour ne produisent pas l’avance ou la stabilité attendue.</p></div></article>
+        <article><span>4</span><div><h3>Comparer</h3><p>Confronter le MCS à cinq baselines de charge et à trois ablations, avec une même règle de calibration et des graines de validation disjointes.</p></div></article>
+        <article><span>5</span><div><h3>Chercher l’échec</h3><p>Publier les contre-exemples, les défaites face aux baselines et les limites négatives — notamment les événements exogènes absents de L, R et B.</p></div></article>
       </div>
     </section>
 

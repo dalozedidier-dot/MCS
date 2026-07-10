@@ -16,7 +16,7 @@ from mcs.baselines import (
 def test_moving_average_no_lookahead():
     L = [0.0, 0.0, 3.0, 3.0]
     ma = moving_average(L, window=2)
-    assert ma[1] == 0.0            # avant le saut, aucune fuite du futur
+    assert ma[1] == 0.0  # avant le saut, aucune fuite du futur
     assert ma[2] == 1.5
 
 
@@ -54,19 +54,26 @@ def test_f3b_is_strictly_harder_than_f3a():
     F3a mais PAS F3b : les deux hypotheses sont bien distinctes.
     Rampe raide 0.02/pas : cas documente ou l'avance s'effondre."""
     from mcs import SimConfig
-    cfg = SimConfig(L=lambda t: 0.15 + 0.02 * t, R=0.7, B=0.65,
-                    rho=0.9, D_crit=0.6)
+
+    cfg = SimConfig(L=lambda t: 0.15 + 0.02 * t, R=0.7, B=0.65, rho=0.9, D_crit=0.6)
     rec = compare_detectors(cfg, 80, "rampe_raide", L_threshold=1.0)
     assert rec.lead_vs_threshold is not None
-    assert rec.lead_vs_threshold > 0          # F3a tiendrait
-    assert rec.lead_vs_event == 0             # F3b echouerait (< 3)
+    assert rec.lead_vs_threshold > 0  # F3a tiendrait
+    assert rec.lead_vs_event == 0  # F3b echouerait (< 3)
 
 
 def test_falsification_report_documents_failures():
     """Un echec doit apparaitre en clair, pas etre masque."""
     from mcs.baselines import FalsificationRecord
-    fake = [FalsificationRecord("cas_ad_hoc", "prediction X", False,
-                                {"raison": "contre-exemple"})]
+
+    fake = [FalsificationRecord("cas_ad_hoc", "prediction X", False, {"raison": "contre-exemple"})]
     report = falsification_report(fake)
     assert "FAIL" in report and "contre-exemple" in report
     assert "0/1 PASS" in report
+
+
+def test_f4_documents_the_unobservable_exogenous_limit():
+    rec = {r.name: r for r in falsification_run()}["F4_limite_evenement_exogene"]
+    assert rec.passed
+    assert rec.details["interpretation"] == "limite confirmee"
+    assert rec.details["mcs_alert"] is None

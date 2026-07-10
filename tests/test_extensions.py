@@ -14,14 +14,12 @@ class TestEvolvingTheta:
 
     def test_inertia(self):
         """tau faible : Theta conserve une histoire (usure lente)."""
-        p_slow = ext.ThetaParams(theta0=1.0, theta_min=0.2,
-                                 alpha=0.5, tau=0.1)
-        p_fast = ext.ThetaParams(theta0=1.0, theta_min=0.2,
-                                 alpha=0.5, tau=1.0)
+        p_slow = ext.ThetaParams(theta0=1.0, theta_min=0.2, alpha=0.5, tau=0.1)
+        p_fast = ext.ThetaParams(theta0=1.0, theta_min=0.2, alpha=0.5, tau=1.0)
         t_slow = ext.theta_update(1.0, p_slow, D_n=1.0, B=1.0)
         t_fast = ext.theta_update(1.0, p_fast, D_n=1.0, B=1.0)
-        assert t_fast == pytest.approx(0.5)      # recalcul direct
-        assert t_fast < t_slow < 1.0             # inertie amortit
+        assert t_fast == pytest.approx(0.5)  # recalcul direct
+        assert t_fast < t_slow < 1.0  # inertie amortit
 
     def test_recovery_toward_theta0(self):
         """Quand les conditions s'ameliorent, Theta remonte vers Theta0."""
@@ -41,17 +39,15 @@ class TestEvolvingTheta:
         a_star = ext.alpha_runaway(rho, D_crit, theta0, R, B)  # 0.3125
 
         def run(alpha, n=800):
-            p = ext.ThetaParams(theta0=theta0, theta_min=0.2,
-                                alpha=alpha, tau=1.0)
-            cfg = SimConfig(L=L, R=R, B=B, rho=rho, D_crit=D_crit,
-                            theta_params=p)
+            p = ext.ThetaParams(theta0=theta0, theta_min=0.2, alpha=alpha, tau=1.0)
+            cfg = SimConfig(L=L, R=R, B=B, rho=rho, D_crit=D_crit, theta_params=p)
             r = simulate(cfg, n)
             return r.theta[-1], r.D[-1]
 
         th_lo, d_lo = run(0.5 * a_star)
         th_hi, d_hi = run(1.5 * a_star)
-        assert d_lo / D_crit < 0.6 and th_lo > 0.9   # sous alpha* : borne
-        assert d_hi >= D_crit and th_hi < 0.6        # au-dela : emballement
+        assert d_lo / D_crit < 0.6 and th_lo > 0.9  # sous alpha* : borne
+        assert d_hi >= D_crit and th_hi < 0.6  # au-dela : emballement
         # alpha tres grand : effondrement jusqu'au plancher Theta_min
         th_floor, _ = run(1.2)
         assert th_floor == pytest.approx(0.2, abs=1e-6)
@@ -65,8 +61,8 @@ class TestControl:
         b0 = ext.effective_feedback(0.5, 0.0, p)
         b_opt = ext.effective_feedback(0.5, u_star, p)
         b_over = ext.effective_feedback(0.5, 3.0 * u_star, p)
-        assert b_opt > b0            # faible intensite : restaure
-        assert b_over < b_opt        # exces : degrade
+        assert b_opt > b0  # faible intensite : restaure
+        assert b_over < b_opt  # exces : degrade
         # U* maximise B_eff sur une grille
         grid = [ext.effective_feedback(0.5, u / 100, p) for u in range(0, 200)]
         assert max(grid) == pytest.approx(b_opt, abs=1e-4)
@@ -77,16 +73,15 @@ class TestControl:
 
     def test_command_reacts_to_previous_margin(self):
         p = ext.ControlParams(gain=2.0, m_ref=0.1, u_max=1.0)
-        assert ext.control_command(0.5, p) == 0.0      # marge confortable
+        assert ext.control_command(0.5, p) == 0.0  # marge confortable
         assert ext.control_command(-0.2, p) == pytest.approx(0.6)
-        assert ext.control_command(-5.0, p) == 1.0     # borne u_max
+        assert ext.control_command(-5.0, p) == 1.0  # borne u_max
 
 
 class TestEvolvingRecovery:
     def test_chamber_recovery(self):
         """Repos apparent + boucles basses => R_eff se degrade (§ 6.5)."""
-        p = ext.RecoveryParams(delta_D=0.3, delta_B=0.5,
-                               B_crit=0.4, R_min=0.2)
+        p = ext.RecoveryParams(delta_D=0.3, delta_B=0.5, B_crit=0.4, R_min=0.2)
         r_healthy = ext.effective_recovery(0.85, D_n=0.0, B_eff=0.8, p=p)
         r_chamber = ext.effective_recovery(0.85, D_n=0.5, B_eff=0.1, p=p)
         assert r_healthy == pytest.approx(0.85)
@@ -101,10 +96,8 @@ class TestNetwork:
         """La dette du noeud fragile devient une charge pour son voisin."""
         fragile = SimConfig(L=0.5, R=0.6, B=0.55, rho=0.85, D_crit=0.5)
         healthy = SimConfig(L=0.3, R=0.9, B=0.9, rho=0.8, D_crit=0.5)
-        coupled = NetworkConfig(nodes=[fragile, healthy],
-                                coupling=[[0.0, 0.0], [0.5, 0.0]])
-        alone = NetworkConfig(nodes=[fragile, healthy],
-                              coupling=[[0.0, 0.0], [0.0, 0.0]])
+        coupled = NetworkConfig(nodes=[fragile, healthy], coupling=[[0.0, 0.0], [0.5, 0.0]])
+        alone = NetworkConfig(nodes=[fragile, healthy], coupling=[[0.0, 0.0], [0.0, 0.0]])
         res_c = simulate_network(coupled, 40)
         res_a = simulate_network(alone, 40)
         assert res_c[1].M[-1] < res_a[1].M[-1]
@@ -120,20 +113,21 @@ class TestNetwork:
 
     def test_saturation_keeps_differentiation(self):
         s1, s2 = saturation(1.0, 0.5), saturation(10.0, 0.5)
-        assert s1 < s2 < 1.0    # differencie les fortes dettes
-      
+        assert s1 < s2 < 1.0  # differencie les fortes dettes
+
 
 def test_single_node_network_matches_full_individual_simulation():
     """Invariant architectural : zero couplage => meme moteur complet."""
     cfg = SimConfig(
-        L=[0.35, 0.55, 0.40], R=0.82, B=0.74, rho=0.86, D_crit=0.8,
+        L=[0.35, 0.55, 0.40],
+        R=0.82,
+        B=0.74,
+        rho=0.86,
+        D_crit=0.8,
         mu0=0.18,
-        theta_params=ext.ThetaParams(theta0=1.0, theta_min=0.45,
-                                     alpha=0.25, beta=0.12, tau=0.4),
-        control=ext.ControlParams(chi=0.08, kappa=0.35, eta=0.45,
-                                  delta=0.15, gain=1.2, m_ref=0.2),
-        recovery=ext.RecoveryParams(delta_D=0.12, delta_B=0.2,
-                                    B_crit=0.5, R_min=0.25),
+        theta_params=ext.ThetaParams(theta0=1.0, theta_min=0.45, alpha=0.25, beta=0.12, tau=0.4),
+        control=ext.ControlParams(chi=0.08, kappa=0.35, eta=0.45, delta=0.15, gain=1.2, m_ref=0.2),
+        recovery=ext.RecoveryParams(delta_D=0.12, delta_B=0.2, B_crit=0.5, R_min=0.25),
     )
     individual = simulate(cfg, 60)
     network = simulate_network(NetworkConfig([cfg], [[0.0]]), 60)[0]

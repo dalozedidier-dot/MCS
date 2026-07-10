@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.6.0 — 2026-07-10
+
+Mise à jour de consolidation méthodologique et de la GitHub Pages.
+
+### Benchmark renforcé
+- Correction de la famille `false_shock` : la série observée et la vérité cachée utilisent désormais exactement la même durée de choc, sans réécriture après génération du bruit.
+- Reformulation méthodologique : les générateurs sont indépendants de la loi de dette et de la marge MCS, mais la proximité structurelle de `silent_erosion` avec l’hypothèse « R et B réduisent la capacité » est désormais explicitement documentée.
+- Remplacement de « FPR identique » par la formulation exacte : **même règle de calibration et FPR cible commun** ; les FPR observés en validation restent publiés tels quels.
+- Ajout de la distribution complète du gain apparié : moyenne, médiane, quartiles, minimum, maximum, taux de victoire/égalité/défaite et intervalle de confiance bootstrap à 95 %.
+- Ajout d’une fenêtre d’alerte utile pré-enregistrée (3 à 30 pas) distinguant alerte utile, trop précoce et tardive/manquée.
+
+### Falsification et limites
+- Ajout de **F4 — événement exogène invisible** : lorsque la rupture dépend d’une variable absente de L, R et B, le MCS ne doit pas être présenté comme prédictif. La limite est testée et publiée comme telle.
+
+### GitHub Pages et qualité
+- Refonte responsive du bloc d’indicateurs : suppression des marges négatives internes, grille `minmax(0, 1fr)`, typographie fluide, retours sûrs et source des données placée dans un conteneur dédié. Les superpositions observées sur certaines largeurs sont supprimées.
+- Chargement des compteurs après réception de `results.json`, pour éviter l’animation prématurée vers zéro.
+- Cartes de résultats mises à jour dynamiquement ; ajout du benchmark à la galerie et affichage du gain avec son IC95.
+- GitHub Actions installe explicitement Node.js 22, exécute la parité Python/JavaScript et produit `coverage.json` et `junit.xml` avant le déploiement.
+- Suite portée à **114 tests**.
+
 ## 0.5.0 — 2026-07-10
 
 Exécution des priorités 1–6 de l'audit « démonstration maximale ».

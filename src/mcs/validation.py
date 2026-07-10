@@ -44,11 +44,8 @@ def validate_thresholds(thresholds: Mapping[str, float] | None) -> dict[str, flo
         raise ValueError(f"seuils manquants : {missing}")
     for key in required:
         finite(f"thresholds[{key}]", th[key])
-    if not (th["viable"] > th["tension"] > th["saturation"]
-            > th["pre_rupture"]):
-        raise ValueError(
-            "les seuils doivent respecter viable > tension > saturation > pre_rupture"
-        )
+    if not (th["viable"] > th["tension"] > th["saturation"] > th["pre_rupture"]):
+        raise ValueError("les seuils doivent respecter viable > tension > saturation > pre_rupture")
     return th
 
 

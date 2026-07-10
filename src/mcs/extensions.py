@@ -21,6 +21,7 @@ from .validation import non_negative, positive, unit_interval
 # 6.1 Remboursement actif de la dette
 # ---------------------------------------------------------------------------
 
+
 def normalized_debt(D: float, D_crit: float) -> float:
     """D_n(t) = min(1, D / D_crit)."""
     if D_crit <= 0:
@@ -37,9 +38,16 @@ def repayment_rate(mu0: float, R_eff: float, D_n: float, gamma: float) -> float:
     return mu0 * R_eff / (1.0 + gamma * D_n)
 
 
-def debt_update_with_repayment(D: float, L: float, R: float, B: float,
-                               C: float, rho: float, mu: float,
-                               extra_repay: float = 0.0) -> float:
+def debt_update_with_repayment(
+    D: float,
+    L: float,
+    R: float,
+    B: float,
+    C: float,
+    rho: float,
+    mu: float,
+    extra_repay: float = 0.0,
+) -> float:
     """D(t+1) = max(0, rho*D + fuite + max(0,L-C) - (mu+extra)*max(0,C-L)).
 
     `extra_repay` permet d'ajouter le terme delta*U(t) du controle
@@ -47,12 +55,10 @@ def debt_update_with_repayment(D: float, L: float, R: float, B: float,
     recuperations concurrentes.
     """
     slack = max(0.0, C - L)
-    return max(0.0, rho * D + leak(L, R, B) + overflow(L, C)
-               - (mu + extra_repay) * slack)
+    return max(0.0, rho * D + leak(L, R, B) + overflow(L, C) - (mu + extra_repay) * slack)
 
 
-def viability_repayment_threshold(L: float, R: float, B: float,
-                                  C: float) -> float:
+def viability_repayment_threshold(L: float, R: float, B: float, C: float) -> float:
     """Remboursement minimal pour enrayer la derive au point de
     fonctionnement : mu* tel que mu * max(0, C-L) = (1-R)L(1-B).
 
@@ -68,6 +74,7 @@ def viability_repayment_threshold(L: float, R: float, B: float,
 # ---------------------------------------------------------------------------
 # 6.2 Capacite nominale evolutive
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class ThetaParams:
@@ -97,8 +104,7 @@ def theta_update(theta: float, p: ThetaParams, D_n: float, B: float) -> float:
     return theta + p.tau * (theta_target(p, D_n, B) - theta)
 
 
-def alpha_runaway(rho: float, D_crit: float, theta0: float,
-                  R: float, B: float) -> float:
+def alpha_runaway(rho: float, D_crit: float, theta0: float, R: float, B: float) -> float:
     """Garde d'emballement : alpha* = (1-rho) * D_crit / (Theta0 * R * B).
 
     Valeur propre effective de la carte de dette : rho + Theta0*R*B*alpha/D_crit.
@@ -114,6 +120,7 @@ def alpha_runaway(rho: float, D_crit: float, theta0: float,
 # ---------------------------------------------------------------------------
 # 6.3 Surcharge de controle
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class ControlParams:
@@ -168,6 +175,7 @@ def control_command(M_prev: float, p: ControlParams) -> float:
 # 6.5 Recuperation effective evolutive
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class RecoveryParams:
     delta_D: float = 0.0
@@ -182,25 +190,24 @@ class RecoveryParams:
         unit_interval("R_min", self.R_min)
 
 
-def effective_recovery(R_brut: float, D_n: float, B_eff: float,
-                       p: RecoveryParams) -> float:
+def effective_recovery(R_brut: float, D_n: float, B_eff: float, p: RecoveryParams) -> float:
     """R_eff(t+1) = clip(R_brut - delta_D*D_n - delta_B*max(0, B_crit - B_eff),
                          R_min, 1).
 
     Formalise la "recuperation en chambre" : du repos apparent peut mal
     recuperer si l'information vivante ne circule plus (B < B_crit).
     """
-    return clip(R_brut - p.delta_D * D_n
-                - p.delta_B * max(0.0, p.B_crit - B_eff),
-                p.R_min, 1.0)
+    return clip(R_brut - p.delta_D * D_n - p.delta_B * max(0.0, p.B_crit - B_eff), p.R_min, 1.0)
 
 
 # ---------------------------------------------------------------------------
 # Changement de pas de temps (§ 9.1)
 # ---------------------------------------------------------------------------
 
-def rescale_time_step(rho: float, rates: dict[str, float],
-                      factor: float) -> tuple[float, dict[str, float]]:
+
+def rescale_time_step(
+    rho: float, rates: dict[str, float], factor: float
+) -> tuple[float, dict[str, float]]:
     """Preserve la constante de temps de la memoire quand on change le pas.
 
     factor = nouveau_pas / ancien_pas. En divisant le pas par deux
@@ -209,6 +216,6 @@ def rescale_time_step(rho: float, rates: dict[str, float],
     """
     if factor <= 0:
         raise ValueError("factor doit etre strictement positif")
-    new_rho = rho ** factor
+    new_rho = rho**factor
     new_rates = {k: v * factor for k, v in rates.items()}
     return new_rho, new_rates

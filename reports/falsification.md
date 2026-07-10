@@ -16,4 +16,8 @@ Details : `{'scenario': 'montee_vers_rupture', 'event': 25, 'mcs': 21, 'naive_th
 Prediction : l'alerte MCS precede la rupture d'au moins 3 pas (avance minimale pre-enregistree) - une alerte simultanee a la rupture n'est pas un signal avance
 Details : `{'scenario': 'montee_vers_rupture', 'event': 25, 'mcs': 21, 'naive_threshold': 171, 'naive_moving_avg': 172, 'lead_vs_threshold': 150, 'lead_vs_moving_avg': 151, 'lead_vs_event': 4, 'mcs_early_and_valid': True, 'min_lead': 3}`
 
-Bilan : 4/4 PASS. Aucun echec sur ce jeu ; en chercher d'autres.
+## F4_limite_evenement_exogene - PASS
+Prediction : un evenement entierement exogene et absent de L, R et B ne doit pas etre presente comme previsible par le MCS
+Details : `{'external_event': 35, 'mcs_alert': None, 'final_zone': 'coherence_viable', 'interpretation': 'limite confirmee'}`
+
+Bilan : 5/5 PASS. Aucun echec sur ce jeu ; en chercher d'autres.

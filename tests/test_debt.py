@@ -13,9 +13,9 @@ class TestDebtDynamics:
         L, R, B, theta, rho = 0.3, 0.85, 0.9, 1.0, 0.8
         C = core.capacity(theta, R, B)
         D = 0.0
-        assert core.margin(L, D, theta, R, B) > 0.3   # zone viable
+        assert core.margin(L, D, theta, R, B) > 0.3  # zone viable
         D1 = core.debt_update(D, L, R, B, C, rho)
-        assert D1 > 0.0                               # et pourtant D monte
+        assert D1 > 0.0  # et pourtant D monte
 
     def test_no_debt_when_full_recovery(self):
         # R = 1 => fuite nulle ; pas de debordement => pas de dette
@@ -25,7 +25,7 @@ class TestDebtDynamics:
     def test_overflow_term(self):
         # L > C ajoute le debordement instantane
         L, R, B, rho = 0.9, 0.5, 0.5, 0.0
-        C = core.capacity(1.0, R, B)   # 0.25
+        C = core.capacity(1.0, R, B)  # 0.25
         D1 = core.debt_update(0.0, L, R, B, C, rho)
         assert D1 == pytest.approx(core.leak(L, R, B) + (L - C))
 
@@ -33,7 +33,7 @@ class TestDebtDynamics:
         """A intrants constants, D converge vers D* = (1-R)L(1-B)/(1-rho)."""
         L, R, B, rho, theta = 0.3, 0.8, 0.7, 0.6, 2.0
         C = core.capacity(theta, R, B)
-        assert L < C                     # pas de debordement
+        assert L < C  # pas de debordement
         D = 0.0
         for _ in range(200):
             D = core.debt_update(D, L, R, B, C, rho)
@@ -56,8 +56,7 @@ class TestDebtDynamics:
             core.debt_rest_level(L, R, B, rho=1.0)
 
     def test_debt_never_negative(self):
-        D = ext.debt_update_with_repayment(0.01, 0.1, 0.99, 0.99,
-                                           C=5.0, rho=0.5, mu=10.0)
+        D = ext.debt_update_with_repayment(0.01, 0.1, 0.99, 0.99, C=5.0, rho=0.5, mu=10.0)
         assert D == 0.0
 
 

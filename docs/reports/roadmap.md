@@ -25,14 +25,14 @@ Rendre le modèle testable sur données réelles, sans circularité.
 - Normalisations du §9.3 : L par charge critique, R = temps de régulation / temps cible, B = min(1, délai critique / délai observé), D(0) = irritants pondérés par ancienneté.
 - Rapport automatique : M(t) ± intervalle de confiance, D(t) en indicateur avancé, zones ordinales avec hystérésis.
 
-## Phase 3 — Confrontation aux données (§9.7) — harnais en place ✅ sur scénarios synthétiques (`baselines.py`, `reports/falsification.md`) ; reste : données réelles externes
+## Phase 3 — Confrontation aux données (§9.7) — harnais durci ✅ (F3a/F3b séparés, avance minimale pré-enregistrée) + benchmark aveugle ✅ (`benchmark.py` : générateur étranger au modèle, 9 détecteurs dont 3 ablations, FPR contrôlé, critère apparié) ; reste : données réelles externes et pré-enregistrement public (OSF/Zenodo)
 
 - Rétro-prédiction sur cas connus de bascule ou de stabilisation (projets, équipes, incidents publics documentés) : un système dont B se dégrade durablement doit voir D monter et M baisser **plus tôt** qu'un système à boucles stables.
 - Comparaison à des baselines naïves (moyenne mobile de L, seuil sur L seul) : le MCS apporte-t-il un signal avancé que la charge seule ne donne pas ?
 - Falsification : chercher activement des jeux de données où les lois de mise à jour échouent ; documenter les échecs.
 - Étude de calibration des paramètres prudents (§9.5) : ρ, μ₀, γ, α, β, χ, κ, η, δ, δ_D, δ_B, R_min, B_crit, s, D_seuil.
 
-## Phase 4 — Diffusion — en cours ✅
+## Phase 4 — Diffusion — simulateur hébergé fait ✅ (GitHub Pages : `docs/simulateur.html`, 5 scénarios §7 préchargés, garde-fous §9.8 affichés, moteur JS vérifié par parité 1e-9 contre Python en CI) ; reste : PyPI, mkdocs, DOI Zenodo — en cours ✅
 
 - Page GitHub Pages de résultats, méthode et limites : **faite** (`docs/`, workflow `pages.yml`).
 - Simulateur hébergé (Streamlit Community Cloud) avec les 5 scénarios §7 préchargés et les garde-fous d'interprétation (§9.8) affichés dans l'interface.

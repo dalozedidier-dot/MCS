@@ -32,7 +32,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - run: pip install -e ".[dev,viz,protocol]"
+      - run: ruff check .
+      - run: mypy src/mcs
+      - run: pytest --cov=mcs --cov-report=json:reports/coverage.json --junitxml=reports/junit.xml
+      - run: pytest tests/test_js_parity.py -q
       - run: python scripts/run_benchmark.py
       - run: python scripts/build_site_data.py
       - uses: actions/configure-pages@v5

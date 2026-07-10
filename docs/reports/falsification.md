@@ -2,14 +2,22 @@
 
 ## F1_degradation_silencieuse - PASS
 Prediction : D monte et le MCS alerte alors que la charge seule reste muette
-Details : `{'scenario': 'degradation_silencieuse', 'event': 12, 'mcs': 9, 'naive_threshold': None, 'naive_moving_avg': None, 'lead_vs_threshold': inf, 'lead_vs_moving_avg': inf, 'mcs_early_and_valid': True}`
+Details : `{'scenario': 'degradation_silencieuse', 'event': 12, 'mcs': 9, 'naive_threshold': None, 'naive_moving_avg': None, 'lead_vs_threshold': inf, 'lead_vs_moving_avg': inf, 'lead_vs_event': 3, 'mcs_early_and_valid': True}`
 
 ## F2_choc_absorbe - PASS
 Prediction : le detecteur de charge s'affole sur un choc bref ; le MCS revient en zone viable (l'hysteresis filtre le transitoire)
 Details : `{'final_zone': 'coherence_viable', 'naive_alerts': True, 'M_final': 0.5906432748538012, 'D_final': 0.0}`
 
-## F3_avance_de_signal - PASS
-Prediction : en cas de rupture, l'alerte MCS precede l'alerte de charge
-Details : `{'scenario': 'montee_vers_rupture', 'event': 11, 'mcs': 11, 'naive_threshold': 43, 'naive_moving_avg': 45, 'lead_vs_threshold': 32, 'lead_vs_moving_avg': 34, 'mcs_early_and_valid': False}`
+## F3a_avance_sur_baseline - PASS
+Prediction : en cas de rupture, l'alerte MCS precede l'alerte de charge (t_MCS <= t_baseline)
+Details : `{'scenario': 'montee_vers_rupture', 'event': 25, 'mcs': 21, 'naive_threshold': 171, 'naive_moving_avg': 172, 'lead_vs_threshold': 150, 'lead_vs_moving_avg': 151, 'lead_vs_event': 4, 'mcs_early_and_valid': True}`
 
-Bilan : 3/3 PASS. Aucun echec sur ce jeu ; en chercher d'autres.
+## F3b_avance_sur_evenement - PASS
+Prediction : l'alerte MCS precede la rupture d'au moins 3 pas (avance minimale pre-enregistree) - une alerte simultanee a la rupture n'est pas un signal avance
+Details : `{'scenario': 'montee_vers_rupture', 'event': 25, 'mcs': 21, 'naive_threshold': 171, 'naive_moving_avg': 172, 'lead_vs_threshold': 150, 'lead_vs_moving_avg': 151, 'lead_vs_event': 4, 'mcs_early_and_valid': True, 'min_lead': 3}`
+
+## F4_limite_evenement_exogene - PASS
+Prediction : un evenement entierement exogene et absent de L, R et B ne doit pas etre presente comme previsible par le MCS
+Details : `{'external_event': 35, 'mcs_alert': None, 'final_zone': 'coherence_viable', 'interpretation': 'limite confirmee'}`
+
+Bilan : 5/5 PASS. Aucun echec sur ce jeu ; en chercher d'autres.

@@ -18,11 +18,12 @@ import streamlit as st
 from mcs import ControlParams, RecoveryParams, SimConfig, ThetaParams, core, simulate
 from mcs.scenarios import ALL_SCENARIOS
 
-st.set_page_config(page_title="MCS - Indice de Marge Systemique",
-                   layout="wide")
+st.set_page_config(page_title="MCS - Indice de Marge Systemique", layout="wide")
 st.title("Modele de Coherence Systemique - prototype interactif")
-st.caption("Outil d'exploration pedagogique. Ce n'est pas un diagnostic "
-           "valide : M(t) se lit comme un indice ordinal avec incertitude.")
+st.caption(
+    "Outil d'exploration pedagogique. Ce n'est pas un diagnostic "
+    "valide : M(t) se lit comme un indice ordinal avec incertitude."
+)
 
 with st.sidebar:
     st.header("Noyau")
@@ -46,8 +47,7 @@ with st.sidebar:
         alpha = st.slider("alpha (dette -> usure)", 0.0, 1.0, 0.25, 0.05)
         beta = st.slider("beta (boucles -> usure)", 0.0, 1.0, 0.15, 0.05)
         tau = st.slider("tau (inertie)", 0.05, 1.0, 0.2, 0.05)
-        tp = ThetaParams(theta0=theta0, theta_min=0.2,
-                         alpha=alpha, beta=beta, tau=tau)
+        tp = ThetaParams(theta0=theta0, theta_min=0.2, alpha=alpha, beta=beta, tau=tau)
 
     use_ctrl = st.checkbox("6.3 Controle")
     cp = None
@@ -56,8 +56,9 @@ with st.sidebar:
         chi = st.slider("chi (cout de charge)", 0.0, 0.5, 0.15, 0.01)
         kappa = st.slider("kappa (restauration de B)", 0.0, 1.0, 0.4, 0.05)
         eta = st.slider("eta (degradation de B)", 0.05, 1.0, 0.5, 0.05)
-        cp = ControlParams(chi=chi, kappa=kappa, eta=eta,
-                           delta=0.05, u_max=1.5, gain=gain, m_ref=0.15)
+        cp = ControlParams(
+            chi=chi, kappa=kappa, eta=eta, delta=0.05, u_max=1.5, gain=gain, m_ref=0.15
+        )
         st.caption(f"U* = kappa/(2 eta) = {kappa / (2 * eta):.2f}")
 
     use_rec = st.checkbox("6.5 Recuperation evolutive")
@@ -70,23 +71,38 @@ with st.sidebar:
     st.header("Incertitude")
     err = st.slider("Erreur relative des proxys (%)", 0, 30, 10) / 100.0
 
-cfg = SimConfig(L=L, R=R, B=B, theta0=theta0, D0=D0, rho=rho, s=s,
-                mu0=mu0, gamma=gamma, D_crit=0.6,
-                theta_params=tp, control=cp, recovery=rp)
+cfg = SimConfig(
+    L=L,
+    R=R,
+    B=B,
+    theta0=theta0,
+    D0=D0,
+    rho=rho,
+    s=s,
+    mu0=mu0,
+    gamma=gamma,
+    D_crit=0.6,
+    theta_params=tp,
+    control=cp,
+    recovery=rp,
+)
 res = simulate(cfg, n_steps)
 
 df = pd.DataFrame(res.to_dict()).set_index("t")
-df["dM"] = [core.margin_uncertainty(m, a, c, rel_err_R=err, rel_err_B=err)
-            for m, a, c in zip(df["M"], df["A"], df["C"], strict=False)]
+df["dM"] = [
+    core.margin_uncertainty(m, a, c, rel_err_R=err, rel_err_B=err)
+    for m, a, c in zip(df["M"], df["A"], df["C"], strict=False)
+]
 df["M_lo"], df["M_hi"] = df["M"] - df["dM"], df["M"] + df["dM"]
 
 c1, c2 = st.columns(2)
 with c1:
     st.subheader("Indice de Marge Systemique M(t)")
-    st.line_chart(df[["M", "M_lo", "M_hi"]],
-                  color=["#1f77b4", "#c0c0c0", "#c0c0c0"])
-    st.caption("Zones pedagogiques : viable > 0.30 | tension > 0.10 | "
-               "saturation > 0.05 | pre-rupture [-0.05, 0.05] | rupture < -0.05")
+    st.line_chart(df[["M", "M_lo", "M_hi"]], color=["#1f77b4", "#c0c0c0", "#c0c0c0"])
+    st.caption(
+        "Zones pedagogiques : viable > 0.30 | tension > 0.10 | "
+        "saturation > 0.05 | pre-rupture [-0.05, 0.05] | rupture < -0.05"
+    )
 with c2:
     st.subheader("Dette invisible D(t) - indicateur avance")
     st.line_chart(df[["D"]], color=["#d62728"])
@@ -101,17 +117,15 @@ with c4:
 
 last = df.iloc[-1]
 zone = res.zone[-1].value.replace("_", " ")
-st.metric("Zone finale (avec hysteresis)", zone,
-          delta=f"M = {last['M']:.3f} +/- {last['dM']:.3f}")
+st.metric("Zone finale (avec hysteresis)", zone, delta=f"M = {last['M']:.3f} +/- {last['dM']:.3f}")
 
 st.divider()
 st.subheader("Scenarios pedagogiques (§ 7)")
 name = st.selectbox("Charger un scenario", ["-"] + list(ALL_SCENARIOS))
 if name != "-":
     out = ALL_SCENARIOS[name]()
-    if isinstance(out, list):     # reseau couple
+    if isinstance(out, list):  # reseau couple
         for _i, r in enumerate(out):
-            st.line_chart(pd.DataFrame({"M": r.M, "D": r.D}),
-                          height=200)
+            st.line_chart(pd.DataFrame({"M": r.M, "D": r.D}), height=200)
     else:
         st.line_chart(pd.DataFrame({"M": out.M, "D": out.D}))
