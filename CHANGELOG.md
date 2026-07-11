@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3 — Données manquantes réelles et exécution multi-jeux résiliente
+
+- MetroPT-3 applique désormais une politique complète-case après agrégation, sans inventer les fenêtres capteurs absentes.
+- Le nombre de lignes écartées et la politique de données manquantes sont publiés dans les métadonnées.
+- Le workflow `all` poursuit les autres jeux si un téléchargement, une vérification ou une évaluation échoue.
+- Les statuts par jeu sont conservés dans `reports/real/workflow-status.tsv` et les artefacts sont toujours publiés.
+
 
 
 ## 0.8.2 — Correctifs empiriques et publication cumulative

@@ -68,11 +68,22 @@ def prepare_metropt3(root: str | Path, *, freq: str = "15min") -> PreparedRealSe
         raise ValueError("MetroPT-3 timestamp column not found")
     df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce", utc=True)
     df = df.dropna(subset=["timestamp"]).sort_values("timestamp").set_index("timestamp")
-    numeric = df.select_dtypes(include=["number"]).resample(freq).mean().interpolate(limit=4)
+    numeric = df.select_dtypes(include=["number"]).resample(freq).mean()
     required = {"Motor_current", "TP2", "TP3", "DV_pressure"}
     missing = sorted(required - set(numeric.columns))
     if missing:
         raise ValueError(f"MetroPT-3 required columns missing: {missing}")
+
+    # Complete-case preparation: no observation is invented. Resampling can create
+    # empty bins when the source has gaps, so rows lacking any actually used sensor
+    # are removed before proxy construction. The removed count is published.
+    used_columns = sorted(required | ({"COMP"} if "COMP" in numeric.columns else set()) | ({"Oil_temperature"} if "Oil_temperature" in numeric.columns else set()))
+    rows_before_missing_filter = len(numeric)
+    numeric = numeric.replace([np.inf, -np.inf], np.nan).dropna(subset=used_columns)
+    rows_dropped_missing = rows_before_missing_filter - len(numeric)
+    if len(numeric) < 40:
+        raise ValueError("MetroPT-3 has too few complete resampled observations")
+
     split_time = pd.Timestamp("2020-03-01T00:00:00Z")
     fit = np.asarray(numeric.index < split_time, dtype=bool)
     motor = robust_unit(numeric["Motor_current"].to_numpy(), fit)
@@ -125,7 +136,9 @@ def prepare_metropt3(root: str | Path, *, freq: str = "15min") -> PreparedRealSe
             "proxy_recipe": "metropt3_v1_engineering_hypothesis",
             "raw_rows": int(len(df)),
             "prepared_rows": int(len(numeric)),
-            "columns_used": ["Motor_current", "COMP", "TP2", "TP3", "DV_pressure", "Oil_temperature"],
+            "rows_dropped_missing": int(rows_dropped_missing),
+            "missing_data_policy": "complete_case_after_resampling_no_value_imputation",
+            "columns_used": used_columns,
             "event_source": "company failure windows published with the dataset",
         },
     )

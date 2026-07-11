@@ -29,27 +29,60 @@ jobs:
             echo 'datasets=${{ inputs.dataset }}' >> "$GITHUB_OUTPUT"
           fi
       - name: Fetch, verify and evaluate official sources
+        id: empirical_run
         shell: bash
         run: |
-          set -euo pipefail
+          set -u -o pipefail
+          mkdir -p reports/real
           fetched=''
+          failures=0
+          : > reports/real/workflow-status.tsv
           for DATASET in ${{ steps.select.outputs.datasets }}; do
             BASE="$DATASET"
             if [[ "$BASE" == ims_bearings_* ]]; then BASE=ims_bearings; fi
             if [[ " $fetched " != *" $BASE "* ]]; then
-              python scripts/fetch_real_data.py "$BASE"
-              python scripts/verify_real_data.py "data/real/$BASE"
+              if ! python scripts/fetch_real_data.py "$BASE"; then
+                printf '%s\tfetch_failed\n' "$DATASET" >> reports/real/workflow-status.tsv
+                failures=$((failures + 1))
+                continue
+              fi
+              if ! python scripts/verify_real_data.py "data/real/$BASE"; then
+                printf '%s\tverification_failed\n' "$DATASET" >> reports/real/workflow-status.tsv
+                failures=$((failures + 1))
+                continue
+              fi
               fetched="$fetched $BASE"
             fi
-            python scripts/run_real_evidence.py "$DATASET"
+            if python scripts/run_real_evidence.py "$DATASET"; then
+              printf '%s\tok\n' "$DATASET" >> reports/real/workflow-status.tsv
+            else
+              printf '%s\tevaluation_failed\n' "$DATASET" >> reports/real/workflow-status.tsv
+              failures=$((failures + 1))
+            fi
           done
+          echo "failures=$failures" >> "$GITHUB_OUTPUT"
+          exit 0
       - name: Refresh readiness after download and extraction
+        if: always()
         run: python scripts/audit_real_readiness.py
       - name: Build cumulative empirical site payload
+        if: always()
         run: python scripts/build_real_evidence_site.py --preserve-existing
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: real-evidence-${{ inputs.dataset }}
           path: |
             reports/real/
             docs/data/real-evidence.json
+      - name: Empirical workflow summary
+        if: always()
+        run: |
+          echo "### Empirical run status" >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f reports/real/workflow-status.tsv ]]; then
+            echo '```text' >> "$GITHUB_STEP_SUMMARY"
+            cat reports/real/workflow-status.tsv >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Failures: ${{ steps.empirical_run.outputs.failures }}" >> "$GITHUB_STEP_SUMMARY"
+
