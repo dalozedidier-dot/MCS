@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: pip install -e ".[dev,viz,protocol]"
+      - run: pip install -e ".[dev,viz,protocol,real]"
       - run: ruff check .
       - run: mypy src/mcs
       - run: pytest --cov=mcs --cov-report=json:reports/coverage.json --junitxml=reports/junit.xml

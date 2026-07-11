@@ -79,7 +79,7 @@ from .robustness import (
 )
 from .simulator import SimConfig, SimResult, simulate
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 __all__ = [
     "DEFAULT_THRESHOLDS",
     "HysteresisClassifier",

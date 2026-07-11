@@ -1,6 +1,14 @@
 # Changelog
 
 
+
+## 0.8.1 — Correctif CI des données réelles
+
+- Installe explicitement l’extra `real` dans les workflows de qualité et GitHub Pages.
+- Évite l’échec de collecte de `tests/test_real_adapters.py` dû à l’absence de pandas.
+- Contraint NumPy à `<2.3` pour conserver la compatibilité du typage mypy ciblant Python 3.10.
+- Conserve la matrice d’exécution Python 3.10–3.12 et le contrôle complet du dépôt.
+
 ## [0.6.1] - 2026-07-10
 
 ### Corrige
