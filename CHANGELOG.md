@@ -2,6 +2,16 @@
 
 
 
+## 0.8.2 — Correctifs empiriques et publication cumulative
+
+- correction du masque temporel MetroPT-3 ;
+- score empirique MCS borné pour éviter les explosions près de C=0 ;
+- intervalles bootstrap non publiés avec moins de deux événements appariés ;
+- jeux insuffisamment calibrables publiés comme `non_evaluable` au lieu de faire échouer le workflow ;
+- agrégation cumulative des résultats réels et option workflow `all` ;
+- mise à jour de `readiness.json` après téléchargement et extraction ;
+- page de preuves compatible avec les statuts non évaluables.
+
 ## 0.8.1 — Correctif CI des données réelles
 
 - Installe explicitement l’extra `real` dans les workflows de qualité et GitHub Pages.

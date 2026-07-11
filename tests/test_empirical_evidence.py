@@ -60,3 +60,26 @@ def test_comparison_is_explicit_when_no_pairs() -> None:
     comparison = compare_detectors(empty, empty)
     assert comparison.n_paired == 0
     assert comparison.median_gain is None
+
+
+def test_empirical_mcs_scores_are_bounded() -> None:
+    L = np.full(80, 1.0)
+    R = np.r_[np.full(40, 0.8), np.full(40, 0.001)]
+    B = np.r_[np.full(40, 0.8), np.full(40, 0.001)]
+    score = detector_scores(L, R, B)["mcs_complet"]
+    assert np.all(np.isfinite(score))
+    assert np.all(score >= -1.0)
+    assert np.all(score <= 1.0)
+
+
+def test_single_paired_event_does_not_claim_bootstrap_interval() -> None:
+    score_a = np.r_[np.zeros(20), np.ones(10)]
+    score_b = np.r_[np.zeros(22), np.ones(8)]
+    event = [EventWindow(27, 27, "event")]
+    a = evaluate_detector("a", score_a, 0.5, event, validation_start=15, horizon=10, confirmation=1)
+    b = evaluate_detector("b", score_b, 0.5, event, validation_start=15, horizon=10, confirmation=1)
+    comparison = compare_detectors(a, b)
+    assert comparison.n_paired == 1
+    assert comparison.ci95_low is None
+    assert comparison.ci95_high is None
+    assert comparison.ci_status == "not_estimable_fewer_than_2_paired_events"

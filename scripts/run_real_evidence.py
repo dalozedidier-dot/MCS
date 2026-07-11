@@ -37,10 +37,10 @@ def _plot(prepared, report: dict, output: Path) -> None:
     from mcs.empirical_evidence import detector_scores
 
     score = detector_scores(prepared.L, prepared.R, prepared.B)["mcs_complet"]
-    axes[3].plot(x, score, linewidth=0.9, label="-M (risque)")
+    axes[3].plot(x, score, linewidth=0.9, label="-M borné (risque)")
     mcs = next(item for item in report["detectors"] if item["name"] == "mcs_complet")
     axes[3].axhline(mcs["threshold"], linestyle="--", linewidth=1, label="seuil calibré")
-    axes[3].set_ylabel("-M")
+    axes[3].set_ylabel("-M borné")
     axes[3].set_xlabel("pas temporel réel")
     for ax in axes:
         ax.axvline(prepared.validation_start, linestyle=":", linewidth=1)
@@ -75,27 +75,54 @@ def main() -> None:
             "A positive result is evidence on this dataset and protocol only; it is not universal validation.",
         ] if x
     )
-    report = build_evidence_report(
-        dataset=prepared.dataset,
-        source_sha256=prepared.source_sha256,
-        protocol_sha256=file_sha256(protocol_path),
-        L=prepared.L,
-        R=prepared.R,
-        B=prepared.B,
-        events=list(prepared.events),
-        calibration_end=prepared.calibration_end,
-        validation_start=prepared.validation_start,
-        horizon=horizon,
-        target_fpr=args.target_fpr,
-        limitations=limitations,
-    ).as_dict()
-    report["metadata"] = prepared.metadata
-    report["events"] = [vars(x) for x in prepared.events]
     out = Path(args.reports)
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"{prepared.dataset}_evidence.json"
+    try:
+        report = build_evidence_report(
+            dataset=prepared.dataset,
+            source_sha256=prepared.source_sha256,
+            protocol_sha256=file_sha256(protocol_path),
+            L=prepared.L,
+            R=prepared.R,
+            B=prepared.B,
+            events=list(prepared.events),
+            calibration_end=prepared.calibration_end,
+            validation_start=prepared.validation_start,
+            horizon=horizon,
+            target_fpr=args.target_fpr,
+            limitations=limitations,
+        ).as_dict()
+    except ValueError as exc:
+        if "calibration values are required" not in str(exc):
+            raise
+        report = {
+            "dataset": prepared.dataset,
+            "status": "non_evaluable",
+            "reason": "insufficient_chronological_non_event_calibration",
+            "detail": str(exc),
+            "source_sha256": prepared.source_sha256,
+            "protocol_sha256": file_sha256(protocol_path),
+            "n_steps": len(prepared.L),
+            "calibration_end": prepared.calibration_end,
+            "validation_start": prepared.validation_start,
+            "event_horizon": horizon,
+            "target_fpr": args.target_fpr,
+            "detectors": [],
+            "comparisons": [],
+            "negative_controls": {},
+            "limitations": [
+                *limitations,
+                "No empirical performance metric was computed because the frozen chronological calibration segment contains fewer than 20 non-event observations.",
+            ],
+        }
+    report.setdefault("status", "evaluated")
+    report["score_transform"] = "negative_bounded_margin"
+    report["metadata"] = prepared.metadata
+    report["events"] = [vars(x) for x in prepared.events]
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    _plot(prepared, report, out)
+    if report["status"] == "evaluated":
+        _plot(prepared, report, out)
     print(path)
 
 

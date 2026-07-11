@@ -62,6 +62,7 @@ class PairedComparison:
     loss_rate: float | None
     ci95_low: float | None
     ci95_high: float | None
+    ci_status: str
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -140,14 +141,15 @@ def ewma(values: np.ndarray, alpha: float = 0.2) -> np.ndarray:
 def mcs_score(L: np.ndarray, R: np.ndarray, B: np.ndarray, *, rho: float = 0.85) -> np.ndarray:
     cfg = SimConfig(L=L.tolist(), R=R.tolist(), B=B.tolist(), rho=rho)
     result = simulate(cfg, n_steps=len(L))
-    # Larger score = more anomalous, matching all other detectors.
-    return -np.asarray(result.M, dtype=float)
+    # Empirical analyses use the bounded margin to prevent near-zero capacity from
+    # producing arbitrarily large scores. Larger score = more anomalous.
+    return -np.asarray(result.M_bounded, dtype=float)
 
 
 def detector_scores(L: np.ndarray, R: np.ndarray, B: np.ndarray, *, rho: float = 0.85) -> dict[str, np.ndarray]:
     """Detectors derived only from measured proxies; no labels are generated here."""
     full = mcs_score(L, R, B, rho=rho)
-    no_debt = -np.asarray(simulate(SimConfig(L=L.tolist(), R=R.tolist(), B=B.tolist(), rho=0.0), n_steps=len(L)).M)
+    no_debt = -np.asarray(simulate(SimConfig(L=L.tolist(), R=R.tolist(), B=B.tolist(), rho=0.0), n_steps=len(L)).M_bounded)
     return {
         "mcs_complet": full,
         "mcs_sans_memoire": no_debt,
@@ -260,9 +262,14 @@ def _bootstrap_median(values: np.ndarray, *, seed: int = 20260711, n_boot: int =
 def compare_detectors(challenger: DetectorResult, reference: DetectorResult) -> PairedComparison:
     n = min(len(challenger.leads), len(reference.leads))
     if n == 0:
-        return PairedComparison(challenger.name, reference.name, 0, None, None, None, None, None, None, None)
+        return PairedComparison(challenger.name, reference.name, 0, None, None, None, None, None, None, None, "not_estimable_no_paired_event")
     gains = np.asarray(challenger.leads[:n], dtype=float) - np.asarray(reference.leads[:n], dtype=float)
-    lo, hi = _bootstrap_median(gains)
+    if n < 2:
+        lo, hi = None, None
+        ci_status = "not_estimable_fewer_than_2_paired_events"
+    else:
+        lo, hi = _bootstrap_median(gains)
+        ci_status = "estimated_bootstrap_95"
     return PairedComparison(
         challenger=challenger.name,
         reference=reference.name,
@@ -274,6 +281,7 @@ def compare_detectors(challenger: DetectorResult, reference: DetectorResult) -> 
         loss_rate=float(np.mean(gains < 0)),
         ci95_low=lo,
         ci95_high=hi,
+        ci_status=ci_status,
     )
 
 

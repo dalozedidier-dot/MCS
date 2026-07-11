@@ -5,31 +5,48 @@ on:
       dataset:
         type: choice
         required: true
-        options: [metropt3, hydraulic, ims_bearings_1st_test, ims_bearings_2nd_test, ims_bearings_3rd_test]
+        options: [all, metropt3, hydraulic, ims_bearings_1st_test, ims_bearings_2nd_test, ims_bearings_3rd_test]
 permissions:
   contents: read
 jobs:
   empirical:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12', cache: pip}
       - run: pip install -e '.[real,viz]'
-      - name: Fetch official source
+      - name: Install IMS extraction support
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full
+      - name: Select datasets
+        id: select
+        shell: bash
         run: |
-          BASE='${{ inputs.dataset }}'
-          if [[ "$BASE" == ims_bearings_* ]]; then BASE=ims_bearings; fi
-          python scripts/fetch_real_data.py "$BASE"
-      - name: Verify source integrity
+          if [[ '${{ inputs.dataset }}' == 'all' ]]; then
+            echo 'datasets=metropt3 hydraulic ims_bearings_1st_test ims_bearings_2nd_test ims_bearings_3rd_test' >> "$GITHUB_OUTPUT"
+          else
+            echo 'datasets=${{ inputs.dataset }}' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Fetch, verify and evaluate official sources
+        shell: bash
         run: |
-          BASE='${{ inputs.dataset }}'
-          if [[ "$BASE" == ims_bearings_* ]]; then BASE=ims_bearings; fi
-          python scripts/verify_real_data.py "data/real/$BASE"
-      - name: Run strict chronological evaluation
-        run: python scripts/run_real_evidence.py '${{ inputs.dataset }}'
-      - run: python scripts/build_real_evidence_site.py
+          set -euo pipefail
+          fetched=''
+          for DATASET in ${{ steps.select.outputs.datasets }}; do
+            BASE="$DATASET"
+            if [[ "$BASE" == ims_bearings_* ]]; then BASE=ims_bearings; fi
+            if [[ " $fetched " != *" $BASE "* ]]; then
+              python scripts/fetch_real_data.py "$BASE"
+              python scripts/verify_real_data.py "data/real/$BASE"
+              fetched="$fetched $BASE"
+            fi
+            python scripts/run_real_evidence.py "$DATASET"
+          done
+      - name: Refresh readiness after download and extraction
+        run: python scripts/audit_real_readiness.py
+      - name: Build cumulative empirical site payload
+        run: python scripts/build_real_evidence_site.py --preserve-existing
       - uses: actions/upload-artifact@v4
         with:
           name: real-evidence-${{ inputs.dataset }}

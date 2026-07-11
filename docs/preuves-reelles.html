@@ -21,11 +21,12 @@ const fmt=x=>x===null||x===undefined?'—':(typeof x==='number'?x.toFixed(3):x);
 fetch('data/real-evidence.json').then(r=>r.json()).then(data=>{
  const root=document.getElementById('results'); root.innerHTML='';
  if(!data.results.length){root.innerHTML='<div class="empty">Aucun résultat empirique publié pour le moment. Les sources peuvent être enregistrées sans qu’un résultat soit inventé.</div>';return;}
- data.results.forEach(r=>{const el=document.createElement('article');el.className='card';el.innerHTML=`
- <span class="status">VALIDATION EMPIRIQUE</span><h2>${r.dataset}</h2>
- <div class="metrics"><div class="metric"><small>Sensibilité</small><b>${fmt(r.sensitivity)}</b></div><div class="metric"><small>Précision</small><b>${fmt(r.precision)}</b></div><div class="metric"><small>Avance médiane</small><b>${fmt(r.median_lead)}</b></div><div class="metric"><small>Fausses alertes / 1000 pas</small><b>${fmt(r.false_alarms_per_1000_steps)}</b></div></div>
- <p>${r.n_steps} observations · ${r.n_events} événements externes</p>
- <p class="hash"><strong>Source :</strong> ${r.source_sha256}<br><strong>Protocole :</strong> ${r.protocol_sha256}</p>
- <div class="limits"><strong>Limites :</strong><ul>${r.limitations.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;root.appendChild(el);});
+ data.results.forEach(r=>{const el=document.createElement('article');el.className='card';
+ const evaluated=r.status==='evaluated';
+ el.innerHTML=`<span class="status">${evaluated?'VALIDATION EMPIRIQUE':'NON ÉVALUABLE'}</span><h2>${r.dataset}</h2>
+ ${evaluated?`<div class="metrics"><div class="metric"><small>Sensibilité</small><b>${fmt(r.sensitivity)}</b></div><div class="metric"><small>Précision</small><b>${fmt(r.precision)}</b></div><div class="metric"><small>Avance médiane</small><b>${fmt(r.median_lead)}</b></div><div class="metric"><small>Fausses alertes / 1000 pas</small><b>${fmt(r.false_alarms_per_1000_steps)}</b></div></div>`:`<p class="warn"><strong>Résultat non calculé :</strong> ${r.reason||'conditions de validation insuffisantes'}.</p>`}
+ <p>${r.n_steps??'—'} observations · ${r.n_events??'—'} événements externes</p>
+ <p class="hash"><strong>Source :</strong> ${r.source_sha256}<br><strong>Protocole :</strong> ${r.protocol_sha256}<br><strong>Score :</strong> ${r.score_transform||'—'}</p>
+ <div class="limits"><strong>Limites :</strong><ul>${(r.limitations||[]).map(x=>`<li>${x}</li>`).join('')}</ul></div>`;root.appendChild(el);});
 }).catch(()=>document.getElementById('results').innerHTML='<div class="empty">Registre empirique indisponible. Aucun chiffre de secours n’est affiché.</div>');
 </script></body></html>

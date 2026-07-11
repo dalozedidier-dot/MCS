@@ -74,7 +74,7 @@ def prepare_metropt3(root: str | Path, *, freq: str = "15min") -> PreparedRealSe
     if missing:
         raise ValueError(f"MetroPT-3 required columns missing: {missing}")
     split_time = pd.Timestamp("2020-03-01T00:00:00Z")
-    fit = (numeric.index < split_time).to_numpy()
+    fit = np.asarray(numeric.index < split_time, dtype=bool)
     motor = robust_unit(numeric["Motor_current"].to_numpy(), fit)
     duty_source = numeric["COMP"].to_numpy() if "COMP" in numeric.columns else motor
     duty = robust_unit(duty_source, fit)

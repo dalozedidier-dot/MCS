@@ -176,7 +176,7 @@ python scripts/run_empirical_csv.py data/real/mon_etude/validation.csv \
 
 Le résultat conserve le SHA-256 du CSV source afin qu'il soit impossible de remplacer silencieusement les données après calcul.
 
-## Validation empirique stricte — v0.8.1
+## Validation empirique stricte — v0.8.2
 
 La branche **Real Data First** possède désormais une chaîne complète de preuve sur données mesurées :
 
