@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "dataset": {
+    "slug": "ims_bearings",
+    "title": "NASA IMS Bearings",
+    "kind": "experimental run-to-failure",
+    "status": "real physical experiment",
+    "source_url": "https://data.nasa.gov/dataset/ims-bearings",
+    "download_url": "https://data.nasa.gov/docs/legacy/IMS.zip",
+    "doi": null,
+    "license": "U.S. government work / source-specific terms",
+    "description": "Run-to-failure vibration measurements from bearings on the University of Cincinnati IMS test rig, distributed by NASA PCoE.",
+    "citation": "Center for Intelligent Maintenance Systems, University of Cincinnati; distributed by NASA Prognostics Center of Excellence.",
+    "expected_files": []
+  },
+  "fetched_at_utc": "2026-07-10T23:44:19.137667+00:00",
+  "archive": {
+    "path": "data/real/ims_bearings/source.zip",
+    "bytes": 1061902801,
+    "sha256": "6cb42c263b0281c725abf99f4b9fcf49915c949f31dbd2333877dc2e06ce9ec2"
+  },
+  "files": [
+    {
+      "path": "raw/IMS/1st_test.rar",
+      "bytes": 366567310,
+      "sha256": "c25241571583948462a3916d97dc11c984a839f38a0da0907fff18c958c0a484"
+    },
+    {
+      "path": "raw/IMS/2nd_test.rar",
+      "bytes": 85581092,
+      "sha256": "b154d5ba1ae5f7f01cdd4f1bde5b08cfdc2f3134d51ad2f6614b1270a86ab632"
+    },
+    {
+      "path": "raw/IMS/3rd_test.rar",
+      "bytes": 609047134,
+      "sha256": "01e9ec83c6c55adc0300a20003a261f9a2ac2b714aae4984050325e589252bc8"
+    },
+    {
+      "path": "raw/IMS/Readme Document for IMS Bearing Data.pdf",
+      "bytes": 400443,
+      "sha256": "cf46d37c21f7f292c11bbbdd4695d876c417ed1d6425e3d87c962ae2182ae6ed"
+    },
+    {
+      "path": "raw/__MACOSX/._IMS",
+      "bytes": 312,
+      "sha256": "5aceee57a0f49188ba0566f5da3f5a8be7968bff7f4174984c526f05900dc489"
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._1st_test.rar",
+      "bytes": 212,
+      "sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a"
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._2nd_test.rar",
+      "bytes": 212,
+      "sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a"
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._3rd_test.rar",
+      "bytes": 212,
+      "sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a"
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._Readme Document for IMS Bearing Data.pdf",
+      "bytes": 212,
+      "sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a"
+    }
+  ]
+}

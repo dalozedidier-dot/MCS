@@ -124,3 +124,16 @@ Noyau §3–5, extensions §6.1–6.5, réseau §6.4, simulateur anti-circularit
 - page GitHub Pages dédiée aux données réelles ;
 - aucune métrique empirique préremplie ou inventée ;
 - données brutes exclues du dépôt Git.
+
+## 0.8.0 — Real Evidence Engine
+
+- adaptateurs complets MetroPT-3, Hydraulic et NASA IMS ;
+- recettes de proxys explicites ajustées sur calibration seulement ;
+- évaluation chronologique stricte avec événements externes ;
+- seuils à FPR cible commun, baselines et ablation de mémoire ;
+- métriques d'événements, avance, précision et fausses alertes ;
+- comparaisons appariées avec intervalles bootstrap ;
+- contrôle négatif par décalage circulaire des événements observés ;
+- rapports JSON, chronologies, registre GitHub Pages sans valeurs de secours ;
+- workflow GitHub Actions pour télécharger, vérifier et évaluer les sources officielles ;
+- publication explicite des limites et des résultats défavorables.

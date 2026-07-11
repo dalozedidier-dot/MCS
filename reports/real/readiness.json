@@ -1,0 +1,36 @@
+{
+  "generated_at_utc": "2026-07-10T23:52:00.943026+00:00",
+  "rule": "ready=true only when every recorded raw file exists and matches its recorded SHA-256",
+  "datasets": [
+    {
+      "dataset": "metropt3",
+      "title": "MetroPT-3",
+      "status": "provenance_only_or_incomplete",
+      "ready": false,
+      "recorded_files": 2,
+      "present_files": 0,
+      "source_url": "https://archive.ics.uci.edu/dataset/791/metropt%2B3%2Bdataset",
+      "provenance": "data/real/metropt3/provenance.json"
+    },
+    {
+      "dataset": "hydraulic",
+      "title": "Condition monitoring of hydraulic systems",
+      "status": "provenance_only_or_incomplete",
+      "ready": false,
+      "recorded_files": 20,
+      "present_files": 0,
+      "source_url": "https://archive.ics.uci.edu/dataset/447/condition+monitoring+of+hydraulic+systems",
+      "provenance": "data/real/hydraulic/provenance.json"
+    },
+    {
+      "dataset": "ims_bearings",
+      "title": "NASA IMS Bearings",
+      "status": "provenance_only_or_incomplete",
+      "ready": false,
+      "recorded_files": 9,
+      "present_files": 0,
+      "source_url": "https://data.nasa.gov/dataset/ims-bearings",
+      "provenance": "data/real/ims_bearings/provenance.json"
+    }
+  ]
+}

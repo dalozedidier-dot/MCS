@@ -175,3 +175,32 @@ python scripts/run_empirical_csv.py data/real/mon_etude/validation.csv \
 ```
 
 Le résultat conserve le SHA-256 du CSV source afin qu'il soit impossible de remplacer silencieusement les données après calcul.
+
+## Validation empirique stricte — v0.8.0
+
+La branche **Real Data First** possède désormais une chaîne complète de preuve sur données mesurées :
+
+1. téléchargement officiel et provenance SHA-256 ;
+2. vérification d'intégrité avant toute analyse ;
+3. adaptateurs spécifiques MetroPT-3, Hydraulic et NASA IMS ;
+4. recettes de proxys explicites, ajustées sur la calibration uniquement ;
+5. séparation chronologique calibration/validation ;
+6. événements externes au MCS ;
+7. seuils calibrés vers un même taux de fausses alertes cible ;
+8. comparaison au MCS sans mémoire et à plusieurs baselines ;
+9. sensibilité, précision, fausses alertes, délai d'alerte et gain apparié ;
+10. intervalle bootstrap et contrôle négatif par décalage circulaire des événements ;
+11. rapport JSON, chronologie graphique et page GitHub Pages dédiée ;
+12. publication obligatoire des limites et des échecs.
+
+Aucun résultat n'est prérempli. Si les fichiers réels ne sont pas présents ou ne passent pas le contrôle SHA-256, aucun chiffre empirique n'est produit.
+
+```bash
+pip install -e ".[real,viz]"
+python scripts/fetch_real_data.py metropt3
+python scripts/verify_real_data.py data/real/metropt3
+python scripts/run_real_evidence.py metropt3
+python scripts/build_real_evidence_site.py
+```
+
+La page `docs/preuves-reelles.html` lit uniquement `docs/data/real-evidence.json`, lui-même construit à partir des rapports réellement calculés.

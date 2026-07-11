@@ -1,0 +1,38 @@
+name: Real empirical evidence
+on:
+  workflow_dispatch:
+    inputs:
+      dataset:
+        type: choice
+        required: true
+        options: [metropt3, hydraulic, ims_bearings_1st_test, ims_bearings_2nd_test, ims_bearings_3rd_test]
+permissions:
+  contents: read
+jobs:
+  empirical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12', cache: pip}
+      - run: pip install -e '.[real,viz]'
+      - name: Fetch official source
+        run: |
+          BASE='${{ inputs.dataset }}'
+          if [[ "$BASE" == ims_bearings_* ]]; then BASE=ims_bearings; fi
+          python scripts/fetch_real_data.py "$BASE"
+      - name: Verify source integrity
+        run: |
+          BASE='${{ inputs.dataset }}'
+          if [[ "$BASE" == ims_bearings_* ]]; then BASE=ims_bearings; fi
+          python scripts/verify_real_data.py "data/real/$BASE"
+      - name: Run strict chronological evaluation
+        run: python scripts/run_real_evidence.py '${{ inputs.dataset }}'
+      - run: python scripts/build_real_evidence_site.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: real-evidence-${{ inputs.dataset }}
+          path: |
+            reports/real/
+            docs/data/real-evidence.json

@@ -1,5 +1,5 @@
 protocol_id: ims_bearings_mcs_v1
-status: draft_not_frozen
+status: implementation_frozen_v1
 source:
   dataset: NASA IMS Bearings
   nature: real_physical_run_to_failure_experiment
@@ -15,3 +15,20 @@ proxies:
 warning: >-
   Failure timing and bearing identity must be taken from the official experiment metadata,
   never inferred from M itself.
+
+
+evaluation_rules:
+  split: chronological_only
+  proxy_scaling: calibration_segment_only
+  target_false_alarm_rate: 0.05
+  threshold_selection: calibration_non_event_quantile
+  confirmation_steps: 2
+  event_matching: one_alarm_maximum_per_external_event
+  negative_control: circular_shift_of_external_event_windows
+  missing_data: no_label_or_observation_fabrication
+publication_rules:
+  publish_failures: true
+  publish_negative_controls: true
+  publish_source_sha256: true
+  publish_protocol_sha256: true
+  universal_validation_claim: forbidden

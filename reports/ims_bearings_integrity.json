@@ -1,0 +1,68 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "path": "raw/IMS/1st_test.rar",
+      "exists": true,
+      "expected_sha256": "c25241571583948462a3916d97dc11c984a839f38a0da0907fff18c958c0a484",
+      "actual_sha256": "c25241571583948462a3916d97dc11c984a839f38a0da0907fff18c958c0a484",
+      "ok": true
+    },
+    {
+      "path": "raw/IMS/2nd_test.rar",
+      "exists": true,
+      "expected_sha256": "b154d5ba1ae5f7f01cdd4f1bde5b08cfdc2f3134d51ad2f6614b1270a86ab632",
+      "actual_sha256": "b154d5ba1ae5f7f01cdd4f1bde5b08cfdc2f3134d51ad2f6614b1270a86ab632",
+      "ok": true
+    },
+    {
+      "path": "raw/IMS/3rd_test.rar",
+      "exists": true,
+      "expected_sha256": "01e9ec83c6c55adc0300a20003a261f9a2ac2b714aae4984050325e589252bc8",
+      "actual_sha256": "01e9ec83c6c55adc0300a20003a261f9a2ac2b714aae4984050325e589252bc8",
+      "ok": true
+    },
+    {
+      "path": "raw/IMS/Readme Document for IMS Bearing Data.pdf",
+      "exists": true,
+      "expected_sha256": "cf46d37c21f7f292c11bbbdd4695d876c417ed1d6425e3d87c962ae2182ae6ed",
+      "actual_sha256": "cf46d37c21f7f292c11bbbdd4695d876c417ed1d6425e3d87c962ae2182ae6ed",
+      "ok": true
+    },
+    {
+      "path": "raw/__MACOSX/._IMS",
+      "exists": true,
+      "expected_sha256": "5aceee57a0f49188ba0566f5da3f5a8be7968bff7f4174984c526f05900dc489",
+      "actual_sha256": "5aceee57a0f49188ba0566f5da3f5a8be7968bff7f4174984c526f05900dc489",
+      "ok": true
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._1st_test.rar",
+      "exists": true,
+      "expected_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "actual_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "ok": true
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._2nd_test.rar",
+      "exists": true,
+      "expected_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "actual_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "ok": true
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._3rd_test.rar",
+      "exists": true,
+      "expected_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "actual_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "ok": true
+    },
+    {
+      "path": "raw/__MACOSX/IMS/._Readme Document for IMS Bearing Data.pdf",
+      "exists": true,
+      "expected_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "actual_sha256": "c557c1b16bca2f691d0c8b6ab326d60b00fd2bc64a5860896bbed00e7209410a",
+      "ok": true
+    }
+  ]
+}
