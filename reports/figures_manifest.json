@@ -10,36 +10,36 @@
     {
       "figure": "monte_carlo.png",
       "generator": "scripts/run_robustness.py",
-      "report_sha256": "51b4607c3bbc4cb966192f2b8c1ae2e0657dc22082929d977529f2797294b87c",
-      "public_sha256": "51b4607c3bbc4cb966192f2b8c1ae2e0657dc22082929d977529f2797294b87c",
+      "report_sha256": "c9831793fae38f1ce036b9d01b747b09b1d0e4ce066ddf56a86eb5ec6ac51914",
+      "public_sha256": "c9831793fae38f1ce036b9d01b747b09b1d0e4ce066ddf56a86eb5ec6ac51914",
       "byte_identical": true
     },
     {
       "figure": "hysteresis_k.png",
       "generator": "scripts/run_robustness.py",
-      "report_sha256": "e45695ff4e966117d5cac5d9778d812f039d981c865fd464ce92fdd828b73b71",
-      "public_sha256": "e45695ff4e966117d5cac5d9778d812f039d981c865fd464ce92fdd828b73b71",
+      "report_sha256": "29f5d94ee4d557279431e02ff40dbd007a527fa68d2ee3e4858fb5051e4d3c4e",
+      "public_sha256": "29f5d94ee4d557279431e02ff40dbd007a527fa68d2ee3e4858fb5051e4d3c4e",
       "byte_identical": true
     },
     {
       "figure": "cascade.png",
       "generator": "scripts/run_robustness.py",
-      "report_sha256": "d47fcdb9bc102d5c40284b22429ee21049233bf4ebb960603a7efc96b7ece225",
-      "public_sha256": "d47fcdb9bc102d5c40284b22429ee21049233bf4ebb960603a7efc96b7ece225",
+      "report_sha256": "1e63c0cdf3985de4bb06fcab55fa1ae55c32a2771e262ff7a83b0f3c28110139",
+      "public_sha256": "1e63c0cdf3985de4bb06fcab55fa1ae55c32a2771e262ff7a83b0f3c28110139",
       "byte_identical": true
     },
     {
       "figure": "tornado.png",
       "generator": "scripts/run_robustness.py",
-      "report_sha256": "ab96894764292db093fc74db17205b747dfd0ecf08edca388991bf23ae1b036a",
-      "public_sha256": "ab96894764292db093fc74db17205b747dfd0ecf08edca388991bf23ae1b036a",
+      "report_sha256": "bc0d06709a61032c109210151ecaec59e5aaa04f37a5849c83e2263b6e71fc76",
+      "public_sha256": "bc0d06709a61032c109210151ecaec59e5aaa04f37a5849c83e2263b6e71fc76",
       "byte_identical": true
     },
     {
       "figure": "oscillations.png",
       "generator": "scripts/run_robustness.py",
-      "report_sha256": "789e2301a40ba35e711c8b23a14702dac118d26d539f27b441577feb5e7c1e0b",
-      "public_sha256": "789e2301a40ba35e711c8b23a14702dac118d26d539f27b441577feb5e7c1e0b",
+      "report_sha256": "826f69d3be70b3ef5e3435b371191c678d5d075b300333c691706f2946b5a9ee",
+      "public_sha256": "826f69d3be70b3ef5e3435b371191c678d5d075b300333c691706f2946b5a9ee",
       "byte_identical": true
     },
     {

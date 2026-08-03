@@ -33,7 +33,7 @@ def main() -> None:
             "recorded_files": recorded,
             "present_files": present,
             "source_url": spec.source_url,
-            "provenance": str(provenance),
+            "provenance": provenance.as_posix(),
         })
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),

@@ -26,7 +26,7 @@ def _summary(data: dict[str, Any], path: Path) -> dict[str, Any]:
         "false_alarms_per_1000_steps": mcs.get("false_alarms_per_1000_steps") if mcs else None,
         "negative_controls": data.get("negative_controls"),
         "limitations": data.get("limitations", []),
-        "report": str(path),
+        "report": path.as_posix(),
     }
 
 
