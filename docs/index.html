@@ -52,7 +52,7 @@
         <article><strong data-metric="n_tests" data-count="0">0</strong><span>tests automatisés</span></article>
         <article><strong data-metric="falsification">— / —</strong><span>tests synthétiques de falsification</span></article>
         <article><strong class="stat-compact" data-metric="python_ci">—</strong><span>versions Python testées en CI</span></article>
-        <article><strong class="stat-compact">SHA‑264</strong><span>intégrité du protocole gelé</span></article>
+        <article><strong class="stat-compact">SHA-256</strong><span>intégrité du protocole gelé</span></article>
       </section>
       <p class="stats-source shell">Chiffres injectés depuis <a href="data/results.json">data/results.json</a>, généré par la CI (<span data-metric="provenance">génération locale</span>) — aucun nombre saisi à la main.</p>
     </div>
@@ -91,7 +91,7 @@
       <div class="section-heading"><p class="eyebrow">Méthode</p><h2>Une chaîne de preuve explicite</h2></div>
       <div class="timeline">
         <article><span>1</span><div><h3>Déclarer</h3><p>Définir les proxys, ancrages, seuils, erreurs relatives et règles d’agrégation avant de regarder les résultats.</p></div></article>
-        <article><span>2</span><div><h3>Geler</h3><p>Calculer une empreinte SHA‑264 du protocole. Toute retouche ultérieure est détectée.</p></div></article>
+        <article><span>2</span><div><h3>Geler</h3><p>Calculer une empreinte SHA-256 du protocole. Toute retouche ultérieure est détectée.</p></div></article>
         <article><span>3</span><div><h3>Calculer</h3><p>Normaliser L, R et B, mettre à jour D, calculer C puis M, et appliquer l’hystérésis sans fuite du futur.</p></div></article>
         <article><span>4</span><div><h3>Comparer</h3><p>Confronter le MCS à cinq baselines de charge et à trois ablations, avec une même règle de calibration et des graines de validation disjointes.</p></div></article>
         <article><span>5</span><div><h3>Chercher l’échec</h3><p>Publier les contre-exemples, les défaites face aux baselines et les limites négatives — notamment les événements exogènes absents de L, R et B.</p></div></article>
@@ -123,6 +123,6 @@ python scripts/run_protocol_demo.py</code></pre>
     </section>
   </main>
 
-  <footer><div class="shell footer-grid"><div><strong>MCS · Modèle de Cohérence Systémique</strong><p>Didier Daloze · Licence MIT</p></div><div><a data-repo-link href="https://github.com/dalozedidier-dot/MCS">Code source</a><a href="https://github.com/dalozedidier-dot/MCS#readme" data-repo-link>Documentation</a><a href="reports/roadmap.md">Feuille de route</a></div></div></footer>
+  <footer><div class="shell footer-grid"><div><strong>MCS · Modèle de Cohérence Systémique</strong><p>Didier Daloze · Licence MIT</p></div><div><a data-repo-link href="https://github.com/dalozedidier-dot/MCS">Code source</a><a href="https://github.com/dalozedidier-dot/MCS#readme">Documentation</a><a href="reports/roadmap.md">Feuille de route</a></div></div></footer>
 </body>
 </html>
