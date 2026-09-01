@@ -25,6 +25,7 @@ jobs:
       - run: ruff check .
       - run: mypy src/mcs
       - run: pytest --cov=mcs --cov-report=term-missing --cov-report=json:reports/coverage.json --junitxml=reports/junit.xml
+      - run: python scripts/run_empirical_csv.py tests/fixtures/empirical_table.csv --output reports/empirical_fixture.json
       - run: pytest tests/test_js_parity.py -q
       - run: python scripts/run_robustness.py
       - run: python scripts/run_protocol_demo.py
