@@ -25,6 +25,8 @@ def test_evaluate_records_binds_sha_to_source_file() -> None:
     assert metrics.source_sha256 == digest
     assert metrics.n_events == 2
     assert metrics.first_event_index == 9
+    assert metrics.n_alarms >= 0
+    assert metrics.event_hits + metrics.missed_events == metrics.n_events
     assert len(margins) == 11
     assert all(isinstance(value, float) for value in margins)
 
