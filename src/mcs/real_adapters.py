@@ -15,7 +15,13 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .empirical import EmpiricalRecord, evaluate_table_bundle, file_sha256, records_from_series, write_empirical_csv
+from .empirical import (
+    EmpiricalRecord,
+    evaluate_table_bundle,
+    file_sha256,
+    records_from_series,
+    write_empirical_csv,
+)
 from .empirical_evidence import EventWindow, robust_unit
 from .proxy_recipes import (
     complete_case_numeric,
