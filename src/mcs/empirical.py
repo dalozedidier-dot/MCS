@@ -6,10 +6,11 @@ an already prepared, auditable table whose event labels are external to MCS.
 from __future__ import annotations
 
 import csv
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from hashlib import sha256
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 from .debt_laws import compare_debt_laws
 from .simulator import SimConfig, simulate
