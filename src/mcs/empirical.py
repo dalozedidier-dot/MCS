@@ -5,6 +5,7 @@ an already prepared, auditable table whose event labels are external to MCS.
 """
 from __future__ import annotations
 
+import csv
 from dataclasses import asdict, dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -43,6 +44,31 @@ def file_sha256(path: str | Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def parse_event(value: str) -> bool:
+    return value.strip().lower() in {"1", "true", "yes", "oui"}
+
+
+def load_empirical_csv(path: str | Path) -> list[EmpiricalRecord]:
+    source = Path(path)
+    with source.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        required = {"timestamp", "L", "R", "B", "event"}
+        if not required.issubset(reader.fieldnames or []):
+            raise ValueError(f"CSV columns required: {sorted(required)}")
+        records = [
+            EmpiricalRecord(
+                timestamp=row["timestamp"],
+                L=float(row["L"]),
+                R=float(row["R"]),
+                B=float(row["B"]),
+                event=parse_event(row["event"]),
+            )
+            for row in reader
+        ]
+    validate_records(records)
+    return records
 
 
 def validate_records(records: list[EmpiricalRecord]) -> None:

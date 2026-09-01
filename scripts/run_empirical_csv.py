@@ -3,15 +3,11 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 from pathlib import Path
 
-from mcs.empirical import EmpiricalRecord, evaluate_records, file_sha256
-
-
-def parse_bool(value: str) -> bool:
-    return value.strip().lower() in {"1", "true", "yes", "oui"}
+from mcs.debt_laws import compare_debt_laws
+from mcs.empirical import evaluate_records, file_sha256, load_empirical_csv
 
 
 def main() -> None:
@@ -21,32 +17,24 @@ def main() -> None:
     parser.add_argument("--alarm-threshold", type=float, default=0.0)
     args = parser.parse_args()
     source = Path(args.csv_path)
-    records: list[EmpiricalRecord] = []
-    with source.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        required = {"timestamp", "L", "R", "B", "event"}
-        if not required.issubset(reader.fieldnames or []):
-            raise ValueError(f"CSV columns required: {sorted(required)}")
-        for row in reader:
-            records.append(
-                EmpiricalRecord(
-                    timestamp=row["timestamp"],
-                    L=float(row["L"]),
-                    R=float(row["R"]),
-                    B=float(row["B"]),
-                    event=parse_bool(row["event"]),
-                )
-            )
+    records = load_empirical_csv(source)
+    digest = file_sha256(source)
     metrics, margins = evaluate_records(
         records,
-        source_sha256=file_sha256(source),
+        source_sha256=digest,
         alarm_threshold=args.alarm_threshold,
+    )
+    laws = compare_debt_laws(
+        [row.L for row in records],
+        [row.R for row in records],
+        [row.B for row in records],
     )
     payload = {
         "status": "empirical_result_computed_from_external_csv",
         "source": str(source),
         "metrics": metrics.as_dict(),
         "M": margins,
+        "debt_laws": laws.as_dict(),
     }
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
