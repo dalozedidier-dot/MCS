@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcs-model"
-version = "0.8.5"
+version = "0.8.6"
 description = "Modele de Coherence Systemique - Indice de Marge Systemique M(t), dette invisible et pre-rupture"
 readme = "README.md"
 requires-python = ">=3.10"

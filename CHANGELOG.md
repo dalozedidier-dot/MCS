@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.6 — Audit CSV collé au rapport de preuve réelle
+
+- `export_and_audit` écrit le CSV officiel `timestamp,L,R,B,event` depuis une série préparée.
+- `scripts/run_real_evidence.py` publie SHA du CSV, métriques table, contrôle négatif et comparaison des lois de dette dans le JSON de preuve.
+- Test CI : SHA lié au fichier exporté, événements externes conservés, lois de dette sur le même chemin.
+
 ## 0.8.5 — Boucle empirique testable sans dump officiel
 
 - Recettes de proxys MetroPT-3 et Hydraulic extraites dans `mcs.proxy_recipes` et testées sur tables au schéma officiel.
