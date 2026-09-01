@@ -10,7 +10,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mcs.empirical_evidence import build_evidence_report, file_sha256
-from mcs.real_adapters import export_and_audit, prepare_hydraulic, prepare_ims_bearings, prepare_metropt3
+from mcs.real_adapters import (
+    export_and_audit,
+    prepare_hydraulic,
+    prepare_ims_bearings,
+    prepare_metropt3,
+)
 
 
 def _prepare(slug: str, root: Path):
