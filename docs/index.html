@@ -13,11 +13,16 @@
     <nav class="nav shell" aria-label="Navigation principale">
       <a class="brand" href="#top" aria-label="Accueil MCS"><span class="brand-mark">M</span><span>MCS</span></a>
       <div class="nav-links">
-        <a href="simulateur.html">Simulateur</a><a href="#resultats">Résultats</a><a href="#methode">Méthode</a><a href="#limites">Limites</a><a href="#reproduire">Reproduire</a>
+        <a href="simulateur.html">Simulateur</a>
+        <a href="donnees-reelles.html">Données réelles</a>
+        <a href="preuves-reelles.html">Preuves réelles</a>
+        <a href="#resultats">Résultats</a>
+        <a href="#methode">Méthode</a>
+        <a href="#limites">Limites</a>
+        <a href="#reproduire">Reproduire</a>
       </div>
-      <a class="button button-small" data-repo-link href="https://github.com/">Voir le dépôt</a>
-    <a href="donnees-reelles.html">Données réelles</a>
-<a href="preuves-reelles.html">Preuves réelles</a></nav>
+      <a class="button button-small" data-repo-link href="https://github.com/dalozedidier-dot/MCS">Voir le dépôt</a>
+    </nav>
     <div class="shell hero-grid" id="top">
       <div>
         <p class="eyebrow">Modèle de Cohérence Systémique · <span data-metric="version">…</span></p>
@@ -47,7 +52,7 @@
         <article><strong data-metric="n_tests" data-count="0">0</strong><span>tests automatisés</span></article>
         <article><strong data-metric="falsification">— / —</strong><span>tests synthétiques de falsification</span></article>
         <article><strong class="stat-compact" data-metric="python_ci">—</strong><span>versions Python testées en CI</span></article>
-        <article><strong class="stat-compact">SHA‑256</strong><span>intégrité du protocole gelé</span></article>
+        <article><strong class="stat-compact">SHA‑264</strong><span>intégrité du protocole gelé</span></article>
       </section>
       <p class="stats-source shell">Chiffres injectés depuis <a href="data/results.json">data/results.json</a>, généré par la CI (<span data-metric="provenance">génération locale</span>) — aucun nombre saisi à la main.</p>
     </div>
@@ -86,7 +91,7 @@
       <div class="section-heading"><p class="eyebrow">Méthode</p><h2>Une chaîne de preuve explicite</h2></div>
       <div class="timeline">
         <article><span>1</span><div><h3>Déclarer</h3><p>Définir les proxys, ancrages, seuils, erreurs relatives et règles d’agrégation avant de regarder les résultats.</p></div></article>
-        <article><span>2</span><div><h3>Geler</h3><p>Calculer une empreinte SHA‑256 du protocole. Toute retouche ultérieure est détectée.</p></div></article>
+        <article><span>2</span><div><h3>Geler</h3><p>Calculer une empreinte SHA‑264 du protocole. Toute retouche ultérieure est détectée.</p></div></article>
         <article><span>3</span><div><h3>Calculer</h3><p>Normaliser L, R et B, mettre à jour D, calculer C puis M, et appliquer l’hystérésis sans fuite du futur.</p></div></article>
         <article><span>4</span><div><h3>Comparer</h3><p>Confronter le MCS à cinq baselines de charge et à trois ablations, avec une même règle de calibration et des graines de validation disjointes.</p></div></article>
         <article><span>5</span><div><h3>Chercher l’échec</h3><p>Publier les contre-exemples, les défaites face aux baselines et les limites négatives — notamment les événements exogènes absents de L, R et B.</p></div></article>
@@ -97,7 +102,7 @@
       <div class="shell limit-grid">
         <div><p class="eyebrow">Discipline d’interprétation</p><h2>Ce qui n’est pas encore démontré</h2></div>
         <div class="limit-list">
-          <article><h3>Validation externe</h3><p>Les résultats actuels sont synthétiques. La capacité prédictive sur des systèmes réels reste à tester sur des données indépendantes.</p></article>
+          <article><h3>Validation externe</h3><p>Les résultats affichés ici sont synthétiques. La chaîne empirique CSV existe dans le dépôt, mais ce n’est pas une preuve de terrain tant que les dumps officiels ne sont pas évalués.</p></article>
           <article><h3>Identifiabilité</h3><p>Plusieurs combinaisons de L, D, R, B, Θ et ρ peuvent produire des trajectoires proches. Les causes ne sont pas inférées automatiquement.</p></article>
           <article><h3>Seuils universels</h3><p>Les zones sont ordinales et pédagogiques. Elles doivent être calibrées par domaine et rapportées avec incertitude.</p></article>
           <article><h3>Pas de diagnostic</h3><p>Une valeur négative isolée de M ne suffit jamais à conclure sur une personne, une équipe ou une organisation.</p></article>
@@ -108,8 +113,8 @@
     <section class="section shell" id="reproduire">
       <div class="reproduce-card">
         <div><p class="eyebrow">Reproductibilité</p><h2>Rejouer l’intégralité des résultats</h2><p>Le dépôt inclut les tests, les scripts de robustesse, le protocole d’exemple et les rapports générés.</p></div>
-        <pre><code>git clone https://github.com/&lt;compte&gt;/mcs-model.git
-cd mcs-model
+        <pre><code>git clone https://github.com/dalozedidier-dot/MCS.git
+cd MCS
 pip install -e ".[dev,viz,protocol]"
 pytest -q
 python scripts/run_robustness.py
@@ -118,6 +123,6 @@ python scripts/run_protocol_demo.py</code></pre>
     </section>
   </main>
 
-  <footer><div class="shell footer-grid"><div><strong>MCS · Modèle de Cohérence Systémique</strong><p>Didier Daloze · Licence MIT</p></div><div><a data-repo-link href="https://github.com/">Code source</a><a href="https://github.com/" data-repo-link>Documentation</a><a href="reports/roadmap.md">Feuille de route</a></div></div></footer>
+  <footer><div class="shell footer-grid"><div><strong>MCS · Modèle de Cohérence Systémique</strong><p>Didier Daloze · Licence MIT</p></div><div><a data-repo-link href="https://github.com/dalozedidier-dot/MCS">Code source</a><a href="https://github.com/dalozedidier-dot/MCS#readme" data-repo-link>Documentation</a><a href="reports/roadmap.md">Feuille de route</a></div></div></footer>
 </body>
 </html>
