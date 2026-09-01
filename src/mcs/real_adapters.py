@@ -15,7 +15,14 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from .empirical import EmpiricalRecord, records_from_series
 from .empirical_evidence import EventWindow, robust_unit
+from .proxy_recipes import (
+    complete_case_numeric,
+    hydraulic_events_from_profile,
+    hydraulic_proxies,
+    metropt3_proxies,
+)
 from .realdata import verify_provenance
 
 
@@ -31,6 +38,19 @@ class PreparedRealSeries:
     validation_start: int
     source_sha256: str
     metadata: dict[str, Any]
+
+
+def prepared_to_records(prepared: PreparedRealSeries) -> list[EmpiricalRecord]:
+    """Project a prepared series onto the official empirical CSV schema.
+
+    Event flags are the externally documented windows already attached to the
+    prepared series. No new label is created here.
+    """
+    flags = [False] * len(prepared.L)
+    for event in prepared.events:
+        for index in range(event.start, min(event.end + 1, len(flags))):
+            flags[index] = True
+    return records_from_series(prepared.timestamps, prepared.L, prepared.R, prepared.B, flags)
 
 
 def _require_integrity(root: Path) -> dict[str, Any]:
@@ -74,39 +94,18 @@ def prepare_metropt3(root: str | Path, *, freq: str = "15min") -> PreparedRealSe
     if missing:
         raise ValueError(f"MetroPT-3 required columns missing: {missing}")
 
-    # Complete-case preparation: no observation is invented. Resampling can create
-    # empty bins when the source has gaps, so rows lacking any actually used sensor
-    # are removed before proxy construction. The removed count is published.
-    used_columns = sorted(required | ({"COMP"} if "COMP" in numeric.columns else set()) | ({"Oil_temperature"} if "Oil_temperature" in numeric.columns else set()))
-    rows_before_missing_filter = len(numeric)
-    numeric = numeric.replace([np.inf, -np.inf], np.nan).dropna(subset=used_columns)
-    rows_dropped_missing = rows_before_missing_filter - len(numeric)
+    used_columns = sorted(
+        required
+        | ({"COMP"} if "COMP" in numeric.columns else set())
+        | ({"Oil_temperature"} if "Oil_temperature" in numeric.columns else set())
+    )
+    numeric, rows_dropped_missing = complete_case_numeric(numeric, used_columns)
     if len(numeric) < 40:
         raise ValueError("MetroPT-3 has too few complete resampled observations")
 
     split_time = pd.Timestamp("2020-03-01T00:00:00Z")
     fit = np.asarray(numeric.index < split_time, dtype=bool)
-    motor = robust_unit(numeric["Motor_current"].to_numpy(), fit)
-    duty_source = numeric["COMP"].to_numpy() if "COMP" in numeric.columns else motor
-    duty = robust_unit(duty_source, fit)
-    pressure_work = robust_unit((numeric["TP2"] - numeric["TP3"]).abs().to_numpy(), fit)
-    L = np.clip(0.55 * motor + 0.25 * duty + 0.20 * pressure_work, 0, 1)
-
-    # Recovery: measured ability to restore reservoir/line pressure after load, proxied by
-    # low rolling pressure deficit and low oil-temperature burden.
-    pressure_deficit = robust_unit((numeric["TP3"].rolling(4, min_periods=1).max() - numeric["TP3"]).abs().to_numpy(), fit)
-    if "Oil_temperature" in numeric.columns:
-        thermal = robust_unit(numeric["Oil_temperature"].to_numpy(), fit)
-    else:
-        thermal = np.zeros(len(numeric))
-    R = np.clip(1.0 - (0.65 * pressure_deficit + 0.35 * thermal), 0, 1)
-
-    # Feedback/coordination: agreement between control state and pressure response.
-    control = numeric["COMP"].to_numpy() if "COMP" in numeric.columns else duty
-    response = numeric["TP2"].diff().fillna(0).to_numpy()
-    mismatch = np.abs(robust_unit(control, fit) - robust_unit(response, fit))
-    instability = robust_unit(numeric["DV_pressure"].rolling(4, min_periods=1).std().fillna(0).to_numpy(), fit)
-    B = np.clip(1.0 - (0.65 * mismatch + 0.35 * instability), 0, 1)
+    L, R, B = metropt3_proxies(numeric, fit)
 
     event_specs = [
         ("2020-04-18T00:00:00Z", "2020-04-18T23:59:59Z", "air_leak_high_stress"),
@@ -161,29 +160,8 @@ def prepare_hydraulic(root: str | Path) -> PreparedRealSeries:
         raise ValueError("hydraulic sensor/profile length mismatch")
     split = int(round(n * 0.5))
     fit = np.arange(n) < split
-    pressure = robust_unit(sensors["PS1"], fit)
-    power = robust_unit(sensors["EPS1"], fit)
-    vibration = robust_unit(sensors["VS1"], fit)
-    L = np.clip(0.45 * pressure + 0.40 * power + 0.15 * vibration, 0, 1)
-    cooling = robust_unit(sensors["CE"], fit)
-    temp = robust_unit(sensors["TS1"], fit)
-    R = np.clip(0.65 * cooling + 0.35 * (1.0 - temp), 0, 1)
-    flow = robust_unit(sensors["FS1"], fit)
-    efficiency = robust_unit(sensors["SE"], fit)
-    mismatch = np.abs(flow - efficiency)
-    B = np.clip(1.0 - mismatch, 0, 1)
-
-    # profile columns: cooler, valve, pump leakage, accumulator, stable flag.
-    abnormal = (profile[:, 0] != 100) | (profile[:, 1] != 100) | (profile[:, 2] != 0) | (profile[:, 3] != 130)
-    events: list[EventWindow] = []
-    start: int | None = None
-    for i, flag in enumerate(abnormal):
-        if flag and start is None:
-            start = i
-        if start is not None and (not flag or i == n - 1):
-            end = i if flag and i == n - 1 else i - 1
-            events.append(EventWindow(start, end, "component_condition_not_nominal"))
-            start = None
+    L, R, B = hydraulic_proxies(sensors, fit)
+    events = list(hydraulic_events_from_profile(profile))
     return PreparedRealSeries(
         dataset="hydraulic",
         timestamps=tuple(str(i) for i in range(n)),
@@ -236,8 +214,6 @@ def prepare_ims_bearings(root: str | Path, *, test_name: str = "2nd_test") -> Pr
             continue
         if data.ndim == 1:
             data = data[:, None]
-        # Empirical vibration features only: RMS load, inverse crest-factor recovery,
-        # and cross-channel agreement as feedback/coordination proxy.
         rms_value = float(np.mean(np.sqrt(np.mean(np.square(data), axis=0))))
         peak_value = float(np.mean(np.max(np.abs(data), axis=0)))
         crest_value = peak_value / max(rms_value, 1e-12)
@@ -259,8 +235,6 @@ def prepare_ims_bearings(root: str | Path, *, test_name: str = "2nd_test") -> Pr
     L = robust_unit(rms_values, fit)
     R = np.asarray(np.clip(1.0 - robust_unit(crest_values, fit), 0, 1), dtype=float)
     B = np.asarray(np.clip(robust_unit(agreement_values, fit), 0, 1), dtype=float)
-    # External event is the documented run termination/failure endpoint. A pre-failure
-    # horizon is evaluated, but the label itself is not generated from MCS.
     end = len(rows) - 1
     events = (EventWindow(end, end, f"documented_{test_name}_run_termination"),)
     return PreparedRealSeries(
