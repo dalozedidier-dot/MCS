@@ -14,7 +14,7 @@ from mcs.empirical import (
 )
 from mcs.empirical_evidence import EventWindow, build_evidence_report
 from mcs.proxy_recipes import hydraulic_events_from_profile, hydraulic_proxies, metropt3_proxies
-from mcs.real_adapters import PreparedRealSeries, prepared_to_records
+from mcs.real_adapters import PreparedRealSeries, export_and_audit, prepared_to_records
 
 
 def test_metropt3_schema_roundtrip_to_official_csv(tmp_path: Path) -> None:
@@ -121,3 +121,25 @@ def test_hydraulic_schema_pipeline_uses_profile_labels() -> None:
     bundle = evaluate_table_bundle(records, source_sha256="fixture-not-official")
     assert bundle["metrics"]["n_events"] == 30
     assert bundle["debt_laws"]["final_D_kernel"] >= 0.0
+
+
+def test_export_and_audit_binds_sha_and_debt_laws(tmp_path: Path) -> None:
+    n = 40
+    prepared = PreparedRealSeries(
+        dataset="audit_fixture",
+        timestamps=tuple(str(i).zfill(4) for i in range(n)),
+        L=np.linspace(0.2, 0.9, n),
+        R=np.linspace(0.9, 0.3, n),
+        B=np.linspace(0.85, 0.35, n),
+        events=(EventWindow(30, 34, "external"),),
+        calibration_end=20,
+        validation_start=20,
+        source_sha256="fixture",
+        metadata={"not_official_evidence": True},
+    )
+    audit = export_and_audit(prepared, tmp_path / "audit.csv")
+    assert Path(audit["official_csv"]).exists()
+    assert audit["metrics"]["n_events"] == 5
+    assert audit["metrics"]["source_sha256"]
+    assert audit["debt_laws"]["n_steps"] == n
+    assert audit["negative_control"]["status"] == "ok"
