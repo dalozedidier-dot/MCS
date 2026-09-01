@@ -50,7 +50,13 @@ def prepared_to_records(prepared: PreparedRealSeries) -> list[EmpiricalRecord]:
     for event in prepared.events:
         for index in range(event.start, min(event.end + 1, len(flags))):
             flags[index] = True
-    return records_from_series(prepared.timestamps, prepared.L, prepared.R, prepared.B, flags)
+    return records_from_series(
+        prepared.timestamps,
+        prepared.L.tolist(),
+        prepared.R.tolist(),
+        prepared.B.tolist(),
+        flags,
+    )
 
 
 def _require_integrity(root: Path) -> dict[str, Any]:
