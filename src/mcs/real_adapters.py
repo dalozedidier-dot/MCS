@@ -15,7 +15,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .empirical import EmpiricalRecord, records_from_series
+from .empirical import EmpiricalRecord, evaluate_table_bundle, file_sha256, records_from_series, write_empirical_csv
 from .empirical_evidence import EventWindow, robust_unit
 from .proxy_recipes import (
     complete_case_numeric,
@@ -57,6 +57,15 @@ def prepared_to_records(prepared: PreparedRealSeries) -> list[EmpiricalRecord]:
         prepared.B.tolist(),
         flags,
     )
+
+
+def export_and_audit(prepared: PreparedRealSeries, csv_path: str | Path) -> dict[str, Any]:
+    """Write the official empirical CSV and evaluate it without creating labels."""
+    records = prepared_to_records(prepared)
+    path = write_empirical_csv(csv_path, records)
+    payload = evaluate_table_bundle(records, source_sha256=file_sha256(path))
+    payload["official_csv"] = str(path)
+    return payload
 
 
 def _require_integrity(root: Path) -> dict[str, Any]:
