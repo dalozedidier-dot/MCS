@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mcs.empirical_evidence import build_evidence_report, file_sha256
-from mcs.real_adapters import prepare_hydraulic, prepare_ims_bearings, prepare_metropt3
+from mcs.real_adapters import export_and_audit, prepare_hydraulic, prepare_ims_bearings, prepare_metropt3
 
 
 def _prepare(slug: str, root: Path):
@@ -120,6 +120,12 @@ def main() -> None:
     report["score_transform"] = "negative_bounded_margin"
     report["metadata"] = prepared.metadata
     report["events"] = [vars(x) for x in prepared.events]
+    audit = export_and_audit(prepared, out / f"{prepared.dataset}_official.csv")
+    report["official_csv"] = audit["official_csv"]
+    report["official_csv_sha256"] = audit["metrics"]["source_sha256"]
+    report["debt_laws"] = audit["debt_laws"]
+    report["table_evaluator"] = audit["metrics"]
+    report["table_negative_control"] = audit["negative_control"]
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     if report["status"] == "evaluated":
         _plot(prepared, report, out)
